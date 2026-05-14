@@ -287,30 +287,51 @@ const ThreeWorld = ({ onSkip, onRestart }) => {
       const maxZ = 120;
 
       const handleWheel = (e) => {
-          targetZ += e.deltaY * 0.05;
+          // Increased sensitivity and normalized delta for better responsiveness
+          const delta = Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY * 0.05), 5);
+          targetZ += delta;
           targetZ = Math.max(0, Math.min(maxZ, targetZ));
       };
       
-      let touchStartY = 0;
-      const handleTouchStart = (e) => touchStartY = e.touches[0].clientY;
-      const handleTouchMove = (e) => {
-          const delta = touchStartY - e.touches[0].clientY;
-          targetZ += delta * 0.2;
-          targetZ = Math.max(0, Math.min(maxZ, targetZ));
-          touchStartY = e.touches[0].clientY;
+      // Keyboard support
+      const keys = { w: false, s: false, arrowup: false, arrowdown: false };
+      const handleKeyDown = (e) => { 
+          const key = e.key.toLowerCase();
+          if(keys[key] !== undefined) keys[key] = true; 
+      };
+      const handleKeyUp = (e) => { 
+          const key = e.key.toLowerCase();
+          if(keys[key] !== undefined) keys[key] = false; 
       };
 
       window.addEventListener('wheel', handleWheel, { passive: true });
       window.addEventListener('touchstart', handleTouchStart, { passive: true });
       window.addEventListener('touchmove', handleTouchMove, { passive: true });
+      window.addEventListener('keydown', handleKeyDown);
+      window.addEventListener('keyup', handleKeyUp);
 
       let frameId;
       const render = () => {
+          // Handle keyboard continuous movement
+          if (keys.w || keys.arrowup) targetZ += 0.6;
+          if (keys.s || keys.arrowdown) targetZ -= 0.6;
+          targetZ = Math.max(0, Math.min(maxZ, targetZ));
+
           currentZ += (targetZ - currentZ) * 0.08;
           
           camera.position.z = -currentZ;
           charGroup.position.z = -currentZ - 4;
-          charGroup.position.y = Math.sin(Date.now() * 0.005) * 0.1;
+          
+          // Walking animation vs Idle animation
+          if (Math.abs(targetZ - currentZ) > 0.1) {
+              // Walking
+              charGroup.rotation.y = Math.sin(Date.now() * 0.01) * 0.2;
+              charGroup.position.y = Math.abs(Math.sin(Date.now() * 0.015)) * 0.3;
+          } else {
+              // Idle
+              charGroup.rotation.y += (0 - charGroup.rotation.y) * 0.1;
+              charGroup.position.y += (Math.sin(Date.now() * 0.005) * 0.1 - charGroup.position.y) * 0.1;
+          }
 
           setProgress((currentZ / 105) * 100); // 105 is the last section
 
@@ -367,6 +388,8 @@ const ThreeWorld = ({ onSkip, onRestart }) => {
           window.removeEventListener('wheel', handleWheel);
           window.removeEventListener('touchstart', handleTouchStart);
           window.removeEventListener('touchmove', handleTouchMove);
+          window.removeEventListener('keydown', handleKeyDown);
+          window.removeEventListener('keyup', handleKeyUp);
           window.removeEventListener('resize', handleResize);
           cancelAnimationFrame(frameId);
           if(mountRef.current && renderer.domElement) {
