@@ -186,7 +186,7 @@ const ThreeWorld = ({ onSkip, onRestart }) => {
   const sectionRefs = useRef([]);
   const [modal, setModal] = useState(null);
   const [muted, setMuted] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const progressRef = useRef(null);
   const [hoveredSection, setHoveredSection] = useState(null);
 
   useEffect(() => {
@@ -304,6 +304,18 @@ const ThreeWorld = ({ onSkip, onRestart }) => {
           if(keys[key] !== undefined) keys[key] = false; 
       };
 
+      let touchStartY = 0;
+      const handleTouchStart = (e) => {
+          touchStartY = e.touches[0].clientY;
+      };
+      const handleTouchMove = (e) => {
+          const touchY = e.touches[0].clientY;
+          const delta = (touchStartY - touchY) * 0.1;
+          targetZ += delta;
+          targetZ = Math.max(0, Math.min(maxZ, targetZ));
+          touchStartY = touchY;
+      };
+
       window.addEventListener('wheel', handleWheel, { passive: true });
       window.addEventListener('touchstart', handleTouchStart, { passive: true });
       window.addEventListener('touchmove', handleTouchMove, { passive: true });
@@ -333,7 +345,9 @@ const ThreeWorld = ({ onSkip, onRestart }) => {
               charGroup.position.y += (Math.sin(Date.now() * 0.005) * 0.1 - charGroup.position.y) * 0.1;
           }
 
-          setProgress((currentZ / 105) * 100); // 105 is the last section
+          if (progressRef.current) {
+              progressRef.current.style.width = `${Math.min(100, (currentZ / 105) * 100)}%`;
+          }
 
           if (Math.abs(currentZ - lastStepZ) > 1.5) {
               AudioEngine.playFootstep();
@@ -411,7 +425,7 @@ const ThreeWorld = ({ onSkip, onRestart }) => {
           </div>
 
           <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${Math.min(100, progress)}%` }}></div>
+              <div ref={progressRef} className="progress-fill" style={{ width: '0%' }}></div>
           </div>
           <div style={{ position: 'fixed', bottom: '10px', width: '100%', textAlign: 'center', color: 'rgba(255,255,255,0.5)', fontSize: '12px', zIndex: 100, pointerEvents: 'none' }}>
               SCROLL TO EXPLORE
