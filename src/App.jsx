@@ -27,7 +27,7 @@ export default function App() {
     <div style={{ maxWidth: '1800px', margin: '0 auto', padding: '0 5vw', position: 'relative' }}>
       
       {/* Navbar */}
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '40px 0', borderBottom: '1px solid rgba(0,0,0,0.05)', flexWrap: 'wrap', gap: '20px' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 0', borderBottom: '1px solid rgba(0,0,0,0.05)', flexWrap: 'wrap', gap: '20px' }}>
         <nav style={{ display: 'flex', gap: '40px' }}>
           <a href="#" className="nav-link">Home</a>
           <a href="#works" className="nav-link">Works</a>
@@ -41,18 +41,18 @@ export default function App() {
       </header>
 
       {/* Hero */}
-      <section style={{ paddingTop: '40px', paddingBottom: '60px', position: 'relative' }}>
+      <section style={{ paddingTop: '10px', paddingBottom: '40px', position: 'relative' }}>
         <div className="blob" style={{ width: '800px', height: '800px', top: '-10%', right: '-5%' }}></div>
         
         <div style={{ position: 'relative', display: 'inline-block', width: '100%', zIndex: 2 }}>
-          <h1 style={{ fontSize: 'min(18vw, 280px)', lineHeight: '0.85', margin: 0, letterSpacing: '-0.04em' }}>Arnav</h1>
-          <h1 className="serif-italic" style={{ fontSize: 'min(18vw, 280px)', lineHeight: '0.85', margin: 0, transform: 'translateX(8vw)', letterSpacing: '-0.02em', color: '#111' }}>
+          <h1 style={{ fontSize: 'min(16vw, 220px)', lineHeight: '0.8', margin: 0, letterSpacing: '-0.04em' }}>Arnav</h1>
+          <h1 className="serif-italic" style={{ fontSize: 'min(16vw, 220px)', lineHeight: '0.8', margin: 0, transform: 'translateX(8vw)', letterSpacing: '-0.02em', color: '#111' }}>
             Shirwadkar.
           </h1>
           
           {/* Avatar & Bubble */}
           <div style={{ position: 'absolute', top: '15%', left: '48%', zIndex: 3, display: 'flex', alignItems: 'center' }}>
-            <div style={{ width: '140px', height: '140px', borderRadius: '50%', overflow: 'hidden', border: '6px solid #f7f7f7', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}>
+            <div style={{ width: '120px', height: '120px', borderRadius: '50%', overflow: 'hidden', border: '6px solid #f7f7f7', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}>
               <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80" alt="Arnav" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div style={{ background: '#fff', padding: '16px 24px', borderRadius: '40px', marginLeft: '-24px', zIndex: -1, boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.95rem', fontWeight: 600 }}>
@@ -62,7 +62,7 @@ export default function App() {
         </div>
 
         {/* Bio & Socials */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: '60px', flexWrap: 'wrap', gap: '40px', position: 'relative', zIndex: 2 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: '20px', flexWrap: 'wrap', gap: '20px', position: 'relative', zIndex: 2 }}>
           <div style={{ display: 'flex', gap: '16px' }}>
             <button className="icon-btn"><FaInstagram size={18} /></button>
             <button className="icon-btn"><FaFacebookF size={18} /></button>
