@@ -24,7 +24,7 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 5vw', position: 'relative' }}>
+    <div style={{ maxWidth: '1800px', margin: '0 auto', padding: '0 5vw', position: 'relative' }}>
       
       {/* Navbar */}
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '40px 0', borderBottom: '1px solid rgba(0,0,0,0.05)', flexWrap: 'wrap', gap: '20px' }}>
@@ -42,17 +42,17 @@ export default function App() {
 
       {/* Hero */}
       <section style={{ paddingTop: '80px', paddingBottom: '120px', position: 'relative' }}>
-        <div className="blob"></div>
+        <div className="blob" style={{ width: '800px', height: '800px', top: '-10%', right: '-5%' }}></div>
         
         <div style={{ position: 'relative', display: 'inline-block', width: '100%', zIndex: 2 }}>
-          <h1 style={{ fontSize: 'min(15vw, 220px)', lineHeight: '0.85', margin: 0, letterSpacing: '-0.04em' }}>Johan</h1>
-          <h1 className="serif-italic" style={{ fontSize: 'min(15vw, 220px)', lineHeight: '0.85', margin: 0, transform: 'translateX(10vw)', letterSpacing: '-0.02em', color: '#111' }}>
+          <h1 style={{ fontSize: 'min(18vw, 280px)', lineHeight: '0.85', margin: 0, letterSpacing: '-0.04em' }}>Johan</h1>
+          <h1 className="serif-italic" style={{ fontSize: 'min(18vw, 280px)', lineHeight: '0.85', margin: 0, transform: 'translateX(8vw)', letterSpacing: '-0.02em', color: '#111' }}>
             Khalwani.
           </h1>
           
           {/* Avatar & Bubble */}
-          <div style={{ position: 'absolute', top: '15%', left: '50%', zIndex: 3, display: 'flex', alignItems: 'center' }}>
-            <div style={{ width: '120px', height: '120px', borderRadius: '50%', overflow: 'hidden', border: '6px solid #f7f7f7', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}>
+          <div style={{ position: 'absolute', top: '15%', left: '48%', zIndex: 3, display: 'flex', alignItems: 'center' }}>
+            <div style={{ width: '140px', height: '140px', borderRadius: '50%', overflow: 'hidden', border: '6px solid #f7f7f7', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}>
               <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80" alt="Johan" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div style={{ background: '#fff', padding: '16px 24px', borderRadius: '40px', marginLeft: '-24px', zIndex: -1, boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.95rem', fontWeight: 600 }}>
@@ -70,7 +70,7 @@ export default function App() {
             <button className="icon-btn"><FaTwitter size={18} /></button>
             <button className="icon-btn"><FaDribbble size={18} /></button>
           </div>
-          <div style={{ maxWidth: '500px' }}>
+          <div style={{ maxWidth: '600px' }}>
             <p style={{ fontSize: '1.25rem', lineHeight: '1.6', color: 'var(--text-secondary)', marginBottom: '40px', fontWeight: 400 }}>
               Hello, I'm Johan Khalwani, an experienced Senior UI/UX Designer with 4+ years of industry experience. I have successfully overseen numerous design projects spanning various sectors. I'm eager to collaborate with you!
             </p>
