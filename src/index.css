@@ -99,9 +99,9 @@ h1, h2, h3, h4, h5, h6 {
    ========================================================================= */
 
 .section-title {
-  font-size: 3.5rem;
-  margin-bottom: 80px;
-  letter-spacing: -0.03em;
+  font-size: 2.8rem;
+  margin-bottom: 40px;
+  letter-spacing: -0.02em;
   font-family: 'Playfair Display', serif;
   font-style: italic;
   font-weight: 700;
@@ -159,14 +159,30 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Projects Silhouette Redesign */
+.projects-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 30px;
+  padding: 10px 0 30px;
+  scroll-snap-type: x mandatory;
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.projects-container::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
 .project-wrapper {
+  flex: 0 0 calc(33.333% - 20px);
+  min-width: 400px;
+  scroll-snap-align: start;
   background: #111;
   color: #fff;
-  padding: 40px;
+  padding: 30px;
   border-radius: 12px;
   position: relative;
   overflow: hidden;
-  margin-bottom: 60px;
   border: 1px solid rgba(255,255,255,0.05);
   transition: transform 0.3s;
 }
@@ -187,7 +203,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .project-number {
@@ -198,29 +214,29 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .project-title {
-  font-size: 2.5rem;
-  margin: 0 0 8px 0;
-  letter-spacing: -0.03em;
+  font-size: 2rem;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.02em;
   color: #fff;
 }
 
 .project-tagline {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   color: #aaa;
-  margin: 0 0 24px 0;
+  margin: 0 0 20px 0;
 }
 
 .project-overview {
-  font-size: 1.25rem;
+  font-size: 1rem;
   color: #ccc;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .tech-stack {
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9rem;
   color: #888;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -233,12 +249,15 @@ h1, h2, h3, h4, h5, h6 {
 
 .project-silhouette {
   width: 100%;
-  height: 400px;
+  aspect-ratio: 2 / 1;
+  height: auto;
   background-color: #000;
   border-radius: 8px;
   overflow: hidden;
   position: relative;
   margin-bottom: 30px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .project-silhouette img {

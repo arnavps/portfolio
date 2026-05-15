@@ -62,7 +62,7 @@ export default function App() {
         </div>
 
         {/* Bio & Socials */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: '4vw', flexWrap: 'wrap', gap: '20px', position: 'relative', zIndex: 2 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '10vw', marginTop: '4vw', position: 'relative', zIndex: 2 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{ display: 'flex', gap: '16px' }}>
               <button className="icon-btn"><FaInstagram size={18} /></button>
@@ -82,7 +82,7 @@ export default function App() {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" style={{ paddingTop: '100px' }}>
+      <section id="skills" style={{ paddingTop: '80px' }}>
         <h2 className="section-title">Skills & Arsenal</h2>
         <div className="skills-grid">
           <div className="skill-card">
@@ -131,68 +131,123 @@ export default function App() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" style={{ paddingTop: '160px' }}>
+      <section id="projects" style={{ paddingTop: '80px' }}>
         <h2 className="section-title">Operations & Projects</h2>
         
-        {/* Project 1 */}
-        <div className="project-wrapper">
-          <div className="project-header">
-            <div>
-              <h3 className="project-title">Project Name</h3>
-              <p className="project-tagline">One-Line High-Level Tagline</p>
+        <div className="projects-container">
+          {/* Project 1 */}
+          <div className="project-wrapper">
+            <div className="project-header">
+              <div>
+                <h3 className="project-title">Project Alpha</h3>
+                <p className="project-tagline">Advanced Network Intrusion Detection</p>
+              </div>
+              <div className="project-number">01/04</div>
             </div>
-            <div className="project-number">01/02</div>
-          </div>
-          
-          <div className="tech-stack">
-            <span>Tech 1</span> <span className="tech-separator">|</span>
-            <span>Tech 2</span> <span className="tech-separator">|</span>
-            <span>Tech 3</span> <span className="tech-separator">|</span>
-            <span>Tech 4</span> <span className="tech-separator">|</span>
-            <span>Key Feature/Domain</span> <span className="tech-separator">|</span>
-            <span>Key Infrastructure</span>
-          </div>
-
-          <div className="project-silhouette">
-            {/* REPLACE THIS IMAGE SOURCE WITH YOUR SCREENSHOT */}
-            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" alt="Project Screenshot Placeholder" />
-          </div>
-
-          <p className="project-overview">
-            A 2-3 sentence high-level overview explaining the core mission of the project, the primary problem it solves, and the ultimate value it provides to the end user. This placeholder text will be replaced by your actual project description.
-          </p>
-        </div>
-
-        {/* Project 2 */}
-        <div className="project-wrapper">
-          <div className="project-header">
-            <div>
-              <h3 className="project-title">Another Project</h3>
-              <p className="project-tagline">Secondary High-Level Tagline</p>
+            
+            <div className="tech-stack">
+              <span>Python</span> <span className="tech-separator">|</span>
+              <span>Scapy</span> <span className="tech-separator">|</span>
+              <span>ELK Stack</span> <span className="tech-separator">|</span>
+              <span>Suricata</span> <span className="tech-separator">|</span>
+              <span>Network Defense</span> <span className="tech-separator">|</span>
+              <span>Linux</span>
             </div>
-            <div className="project-number">02/02</div>
-          </div>
-          
-          <div className="tech-stack">
-            <span>Python</span> <span className="tech-separator">|</span>
-            <span>Docker</span> <span className="tech-separator">|</span>
-            <span>AWS</span> <span className="tech-separator">|</span>
-            <span>Vulnerability Scanning</span>
+
+            <div className="project-silhouette">
+              <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" alt="Project 1" />
+            </div>
+
+            <p className="project-overview">
+              An AI-driven intrusion detection system designed to identify and mitigate real-time network threats. It utilizes deep packet inspection and behavioral analysis to defend against zero-day exploits and sophisticated lateral movement.
+            </p>
           </div>
 
-          <div className="project-silhouette">
-            {/* REPLACE THIS IMAGE SOURCE WITH YOUR SCREENSHOT */}
-            <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1200&q=80" alt="Project 2 Placeholder" />
+          {/* Project 2 */}
+          <div className="project-wrapper">
+            <div className="project-header">
+              <div>
+                <h3 className="project-title">Project Beta</h3>
+                <p className="project-tagline">Automated Penetration Testing Framework</p>
+              </div>
+              <div className="project-number">02/04</div>
+            </div>
+            
+            <div className="tech-stack">
+              <span>Go</span> <span className="tech-separator">|</span>
+              <span>Docker</span> <span className="tech-separator">|</span>
+              <span>Metasploit API</span> <span className="tech-separator">|</span>
+              <span>Vulnerability Scanning</span> <span className="tech-separator">|</span>
+              <span>Offensive Security</span>
+            </div>
+
+            <div className="project-silhouette">
+              <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1200&q=80" alt="Project 2" />
+            </div>
+
+            <p className="project-overview">
+              A modular framework that orchestrates complex attack chains to validate security controls. By simulating realistic adversary behavior, it provides actionable insights into defensive gaps and misconfigurations across hybrid environments.
+            </p>
           </div>
 
-          <p className="project-overview">
-            A 2-3 sentence high-level overview explaining the core mission of the project, the primary problem it solves, and the ultimate value it provides to the end user. This placeholder text will be replaced by your actual project description.
-          </p>
+          {/* Project 3 */}
+          <div className="project-wrapper">
+            <div className="project-header">
+              <div>
+                <h3 className="project-title">Project Gamma</h3>
+                <p className="project-tagline">Cloud Security Posture Management</p>
+              </div>
+              <div className="project-number">03/04</div>
+            </div>
+            
+            <div className="tech-stack">
+              <span>Terraform</span> <span className="tech-separator">|</span>
+              <span>AWS</span> <span className="tech-separator">|</span>
+              <span>Cloud Custodian</span> <span className="tech-separator">|</span>
+              <span>IAM Analysis</span> <span className="tech-separator">|</span>
+              <span>Infrastructure as Code</span>
+            </div>
+
+            <div className="project-silhouette">
+              <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80" alt="Project 3" />
+            </div>
+
+            <p className="project-overview">
+              A comprehensive toolset for auditing and securing multi-cloud infrastructures. It automatically identifies overly permissive IAM policies, unencrypted storage, and exposed services, ensuring compliance with industry standards and best practices.
+            </p>
+          </div>
+
+          {/* Project 4 */}
+          <div className="project-wrapper">
+            <div className="project-header">
+              <div>
+                <h3 className="project-title">Project Delta</h3>
+                <p className="project-tagline">Zero Trust Architecture Implementation</p>
+              </div>
+              <div className="project-number">04/04</div>
+            </div>
+            
+            <div className="tech-stack">
+              <span>Kubernetes</span> <span className="tech-separator">|</span>
+              <span>Istio</span> <span className="tech-separator">|</span>
+              <span>OAuth2</span> <span className="tech-separator">|</span>
+              <span>OPA</span> <span className="tech-separator">|</span>
+              <span>Network Segmentation</span>
+            </div>
+
+            <div className="project-silhouette">
+              <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80" alt="Project 4" />
+            </div>
+
+            <p className="project-overview">
+              A reference implementation of a Zero Trust network for microservices. It enforces granular access control, mutual TLS, and continuous verification, significantly reducing the attack surface in cloud-native environments.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Experience Section */}
-      <section style={{ paddingTop: '100px' }}>
+      <section style={{ paddingTop: '80px' }}>
         <h2 className="section-title">Experience</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
           
@@ -213,7 +268,7 @@ export default function App() {
       </section>
 
       {/* Education */}
-      <section style={{ paddingTop: '100px' }}>
+      <section style={{ paddingTop: '80px' }}>
         <h2 className="section-title">Education</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px' }}>
           <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '30px' }}>
@@ -230,7 +285,7 @@ export default function App() {
       </section>
 
       {/* Certifications */}
-      <section style={{ paddingTop: '100px' }}>
+      <section style={{ paddingTop: '80px' }}>
         <h2 className="section-title">Certifications</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '40px' }}>
           <div className="cert-silhouette">
@@ -245,19 +300,19 @@ export default function App() {
       </section>
 
       {/* Achievements */}
-      <section style={{ paddingTop: '100px' }}>
+      <section style={{ paddingTop: '80px' }}>
         <h2 className="section-title">Achievements</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
-          <div style={{ background: '#111', color: '#fff', padding: '40px', borderRadius: '12px' }}>
-            <h3 style={{ fontSize: '3rem', marginBottom: '10px', fontFamily: '"Courier New", monospace' }}>Top 1%</h3>
+          <div style={{ background: '#111', color: '#fff', padding: '30px', borderRadius: '12px' }}>
+            <h3 style={{ fontSize: '2.5rem', marginBottom: '10px', fontFamily: '"Courier New", monospace' }}>Top 1%</h3>
             <p style={{ fontSize: '1.2rem', color: '#aaa' }}>TryHackMe Global Ranking</p>
           </div>
-          <div style={{ background: '#111', color: '#fff', padding: '40px', borderRadius: '12px' }}>
-            <h3 style={{ fontSize: '3rem', marginBottom: '10px', fontFamily: '"Courier New", monospace' }}>5+</h3>
+          <div style={{ background: '#111', color: '#fff', padding: '30px', borderRadius: '12px' }}>
+            <h3 style={{ fontSize: '2.5rem', marginBottom: '10px', fontFamily: '"Courier New", monospace' }}>5+</h3>
             <p style={{ fontSize: '1.2rem', color: '#aaa' }}>Valid Bug Bounty Reports</p>
           </div>
-          <div style={{ background: '#111', color: '#fff', padding: '40px', borderRadius: '12px' }}>
-            <h3 style={{ fontSize: '3rem', marginBottom: '10px', fontFamily: '"Courier New", monospace' }}>1st Place</h3>
+          <div style={{ background: '#111', color: '#fff', padding: '30px', borderRadius: '12px' }}>
+            <h3 style={{ fontSize: '2.5rem', marginBottom: '10px', fontFamily: '"Courier New", monospace' }}>1st Place</h3>
             <p style={{ fontSize: '1.2rem', color: '#aaa' }}>University CTF Competition</p>
           </div>
         </div>
