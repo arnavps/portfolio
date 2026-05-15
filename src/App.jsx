@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowUpRight, Volume2 } from 'lucide-react';
-import { FaInstagram, FaFacebookF, FaLinkedinIn, FaTwitter, FaDribbble } from 'react-icons/fa';
+import { FaInstagram, FaFacebookF, FaLinkedinIn, FaTwitter, FaDribbble, FaGithub } from 'react-icons/fa';
 import './index.css';
 
 export default function App() {
@@ -41,7 +41,7 @@ export default function App() {
       </header>
 
       {/* Hero */}
-      <section style={{ paddingTop: '0', paddingBottom: '30px', position: 'relative' }}>
+      <section style={{ paddingTop: '6vh', paddingBottom: '30px', position: 'relative' }}>
         <div className="blob" style={{ width: '800px', height: '800px', top: '-10%', right: '-5%' }}></div>
         
         <div style={{ position: 'relative', display: 'inline-block', width: '100%', zIndex: 2 }}>
@@ -70,7 +70,7 @@ export default function App() {
               <button className="icon-btn"><FaTwitter size={18} /></button>
               <button className="icon-btn"><FaGithub size={18} /></button>
             </div>
-            <button className="btn-primary" style={{ alignSelf: 'flex-start' }}>Contact Me</button>
+            <button className="pill-btn" style={{ alignSelf: 'flex-start' }}>Contact Me</button>
           </div>
           
           <div style={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -81,73 +81,191 @@ export default function App() {
         </div>
       </section>
 
-      {/* Works Grid */}
-      <section id="works" style={{ paddingTop: '100px', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '60px' }}>
-          
-          {/* Project 1 */}
-          <div>
-            <div style={{ marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '1.75rem', marginBottom: '8px' }}>ARTVISTA GALLERY</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Art Gallery Website</p>
+      {/* Skills Section */}
+      <section id="skills" style={{ paddingTop: '100px' }}>
+        <h2 className="section-title">Skills & Arsenal</h2>
+        <div className="skills-grid">
+          <div className="skill-card">
+            <h3 className="skill-category">Offensive Security</h3>
+            <ul className="skill-list">
+              <li className="skill-item">Web Application Testing</li>
+              <li className="skill-item">Reconnaissance</li>
+              <li className="skill-item">Vulnerability Assessment</li>
+              <li className="skill-item">OWASP Top 10</li>
+              <li className="skill-item">Enumeration</li>
+              <li className="skill-item">Basic Exploit Development</li>
+            </ul>
+          </div>
+          <div className="skill-card">
+            <h3 className="skill-category">Networking</h3>
+            <ul className="skill-list">
+              <li className="skill-item">TCP/IP</li>
+              <li className="skill-item">DNS</li>
+              <li className="skill-item">HTTP/HTTPS</li>
+              <li className="skill-item">Routing & Switching</li>
+              <li className="skill-item">Subnetting</li>
+            </ul>
+          </div>
+          <div className="skill-card">
+            <h3 className="skill-category">Tools</h3>
+            <ul className="skill-list">
+              <li className="skill-item">Burp Suite</li>
+              <li className="skill-item">Nmap</li>
+              <li className="skill-item">Wireshark</li>
+              <li className="skill-item">Metasploit</li>
+              <li className="skill-item">ffuf / gobuster</li>
+              <li className="skill-item">sqlmap / nuclei</li>
+            </ul>
+          </div>
+          <div className="skill-card">
+            <h3 className="skill-category">Programming & Platforms</h3>
+            <ul className="skill-list">
+              <li className="skill-item">Python / Bash</li>
+              <li className="skill-item">JavaScript / HTML/CSS</li>
+              <li className="skill-item">Linux</li>
+              <li className="skill-item">Git / Docker</li>
+              <li className="skill-item">TryHackMe / Hack The Box</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Projects Section */}
+      <section id="projects" style={{ paddingTop: '160px' }}>
+        <h2 className="section-title">Operations & Projects</h2>
+        
+        {/* Project 1 */}
+        <div className="project-wrapper">
+          <div className="project-header">
+            <div>
+              <h3 className="project-title">Project Name</h3>
+              <p className="project-tagline">One-Line High-Level Tagline</p>
             </div>
-            <div className="project-card-image">
-              <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80" alt="Artvista" />
-              <button className="project-btn">
-                <ArrowUpRight size={36} strokeWidth={1.5} />
-              </button>
-            </div>
+            <div className="project-number">01/02</div>
           </div>
           
-          {/* Project 2 */}
-          <div>
-            <div style={{ marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '1.75rem', marginBottom: '8px' }}>PERUM</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Real Estate Dashboard</p>
-            </div>
-            <div className="project-card-image">
-              <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="Perum" />
-              <button className="project-btn">
-                <ArrowUpRight size={36} strokeWidth={1.5} />
-              </button>
-            </div>
+          <div className="tech-stack">
+            <span>Tech 1</span> <span className="tech-separator">|</span>
+            <span>Tech 2</span> <span className="tech-separator">|</span>
+            <span>Tech 3</span> <span className="tech-separator">|</span>
+            <span>Tech 4</span> <span className="tech-separator">|</span>
+            <span>Key Feature/Domain</span> <span className="tech-separator">|</span>
+            <span>Key Infrastructure</span>
           </div>
 
+          <div className="project-silhouette">
+            {/* REPLACE THIS IMAGE SOURCE WITH YOUR SCREENSHOT */}
+            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" alt="Project Screenshot Placeholder" />
+          </div>
+
+          <p className="project-overview">
+            A 2-3 sentence high-level overview explaining the core mission of the project, the primary problem it solves, and the ultimate value it provides to the end user. This placeholder text will be replaced by your actual project description.
+          </p>
+        </div>
+
+        {/* Project 2 */}
+        <div className="project-wrapper">
+          <div className="project-header">
+            <div>
+              <h3 className="project-title">Another Project</h3>
+              <p className="project-tagline">Secondary High-Level Tagline</p>
+            </div>
+            <div className="project-number">02/02</div>
+          </div>
+          
+          <div className="tech-stack">
+            <span>Python</span> <span className="tech-separator">|</span>
+            <span>Docker</span> <span className="tech-separator">|</span>
+            <span>AWS</span> <span className="tech-separator">|</span>
+            <span>Vulnerability Scanning</span>
+          </div>
+
+          <div className="project-silhouette">
+            {/* REPLACE THIS IMAGE SOURCE WITH YOUR SCREENSHOT */}
+            <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1200&q=80" alt="Project 2 Placeholder" />
+          </div>
+
+          <p className="project-overview">
+            A 2-3 sentence high-level overview explaining the core mission of the project, the primary problem it solves, and the ultimate value it provides to the end user. This placeholder text will be replaced by your actual project description.
+          </p>
         </div>
       </section>
 
       {/* Experience Section */}
-      <section style={{ padding: '120px 0 160px 0' }}>
-        <h2 style={{ fontSize: '3.5rem', marginBottom: '80px', letterSpacing: '-0.03em' }}>Experience</h2>
+      <section style={{ paddingTop: '100px' }}>
+        <h2 className="section-title">Experience</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
           
           {/* Exp 1 */}
           <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: '40px', borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '50px', paddingBottom: '50px' }}>
-            <div style={{ padding: '10px 20px', background: 'rgba(0,0,0,0.05)', borderRadius: '30px', display: 'inline-block', justifySelf: 'start', height: 'fit-content', fontSize: '0.9rem', fontWeight: 600 }}>
-              2021 - Current
+            <div style={{ fontFamily: '"Courier New", monospace', padding: '10px 20px', background: 'rgba(0,0,0,0.05)', borderRadius: '4px', display: 'inline-block', justifySelf: 'start', height: 'fit-content', fontSize: '0.9rem', fontWeight: 600 }}>
+              2023 - Current
             </div>
             <div>
-              <h3 style={{ fontSize: '2rem', marginBottom: '20px', fontWeight: 700, letterSpacing: '-0.02em' }}>Senior UI/UX Designer at Vektora Studio</h3>
+              <h3 style={{ fontSize: '2rem', marginBottom: '10px', fontWeight: 700, letterSpacing: '-0.02em' }}>Security Researcher / Penetration Tester</h3>
+              <h4 style={{ fontSize: '1.2rem', color: 'var(--text-primary)', marginBottom: '20px', fontWeight: 500 }}>Company Name</h4>
               <p style={{ color: 'var(--text-secondary)', lineHeight: '1.7', maxWidth: '650px', fontSize: '1.15rem' }}>
-                Work on various UI/UX related projects across various business sectors. Driving design strategy and leading multiple successful product launches.
+                Conducted comprehensive vulnerability assessments and penetration testing on web applications and internal networks. Discovered and remediated critical security flaws.
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Education & Certs */}
+      <section style={{ paddingTop: '100px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '80px' }}>
           
-          {/* Exp 2 */}
-          <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: '40px', borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '50px', paddingBottom: '50px' }}>
-            <div style={{ padding: '10px 20px', background: 'rgba(0,0,0,0.05)', borderRadius: '30px', display: 'inline-block', justifySelf: 'start', height: 'fit-content', fontSize: '0.9rem', fontWeight: 600 }}>
-              2020 - 2021
-            </div>
-            <div>
-              <h3 style={{ fontSize: '2rem', marginBottom: '20px', fontWeight: 700, letterSpacing: '-0.02em' }}>Webflow Developer at Hvolen Studio</h3>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: '1.7', maxWidth: '650px', fontSize: '1.15rem' }}>
-                Take part in various web development related projects in various business sectors, specializing in high-fidelity interactive Webflow builds.
-              </p>
+          <div>
+            <h2 className="section-title" style={{ marginBottom: '40px' }}>Education</h2>
+            <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '30px', paddingBottom: '30px' }}>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px' }}>B.S. Cybersecurity (Example)</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '8px' }}>University Name</p>
+              <p style={{ fontFamily: '"Courier New", monospace', fontSize: '0.9rem', color: '#888' }}>2019 - 2023</p>
             </div>
           </div>
 
+          <div>
+            <h2 className="section-title" style={{ marginBottom: '40px' }}>Certifications</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '30px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fdfdfd', padding: '20px', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px' }}>
+                <span style={{ fontSize: '1.2rem', fontWeight: 600 }}>Offensive Security Certified Professional (OSCP)</span>
+                <span style={{ fontFamily: '"Courier New", monospace', color: 'var(--text-secondary)' }}>Active</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fdfdfd', padding: '20px', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px' }}>
+                <span style={{ fontSize: '1.2rem', fontWeight: 600 }}>CompTIA Security+</span>
+                <span style={{ fontFamily: '"Courier New", monospace', color: 'var(--text-secondary)' }}>Active</span>
+              </div>
+            </div>
+          </div>
         </div>
+      </section>
+
+      {/* Achievements */}
+      <section style={{ paddingTop: '100px' }}>
+        <h2 className="section-title">Achievements</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
+          <div style={{ background: '#111', color: '#fff', padding: '40px', borderRadius: '12px' }}>
+            <h3 style={{ fontSize: '3rem', marginBottom: '10px', fontFamily: '"Courier New", monospace' }}>Top 1%</h3>
+            <p style={{ fontSize: '1.2rem', color: '#aaa' }}>TryHackMe Global Ranking</p>
+          </div>
+          <div style={{ background: '#111', color: '#fff', padding: '40px', borderRadius: '12px' }}>
+            <h3 style={{ fontSize: '3rem', marginBottom: '10px', fontFamily: '"Courier New", monospace' }}>5+</h3>
+            <p style={{ fontSize: '1.2rem', color: '#aaa' }}>Valid Bug Bounty Reports</p>
+          </div>
+          <div style={{ background: '#111', color: '#fff', padding: '40px', borderRadius: '12px' }}>
+            <h3 style={{ fontSize: '3rem', marginBottom: '10px', fontFamily: '"Courier New", monospace' }}>1st Place</h3>
+            <p style={{ fontSize: '1.2rem', color: '#aaa' }}>University CTF Competition</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Quote Section */}
+      <section className="quote-section">
+        <h2 className="quote-text">
+          "Amateurs hack systems, professionals hack people."
+        </h2>
+        <div className="quote-author">Bruce Schneier</div>
       </section>
       
       {/* Footer */}

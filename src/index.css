@@ -81,17 +81,187 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--text-primary);
   color: #fff;
   border: none;
-  padding: 16px 32px;
-  border-radius: 30px;
-  font-size: 1rem;
-  font-weight: 500;
+  padding: 10px 20px;
+  background: var(--text-primary);
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.2s;
+  transition: transform 0.3s;
 }
 
-.pill-btn:hover {
-  opacity: 0.8;
-  transform: translateY(-2px);
+.project-btn:hover {
+  transform: scale(1.1) rotate(15deg);
+}
+
+/* =========================================================================
+   NEW SECTIONS: SKILLS, PROJECTS REDESIGN, TIMELINE
+   ========================================================================= */
+
+.section-title {
+  font-size: 3.5rem;
+  margin-bottom: 80px;
+  letter-spacing: -0.03em;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 700;
+}
+
+/* Skills Grid */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 40px;
+}
+
+.skill-card {
+  background: #fdfdfd;
+  border: 1px solid rgba(0,0,0,0.05);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.skill-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+}
+
+.skill-category {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+
+.skill-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skill-item {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.skill-item::before {
+  content: '→';
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+/* Projects Silhouette Redesign */
+.project-wrapper {
+  position: relative;
+  margin-bottom: 120px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding-bottom: 80px;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.project-number {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.project-title {
+  font-size: 2.5rem;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.03em;
+}
+
+.project-tagline {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.tech-stack {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.tech-separator {
+  color: #ccc;
+}
+
+.project-silhouette {
+  width: 100%;
+  height: 500px;
+  background-color: #111;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.project-silhouette img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.5; /* Silhouette effect */
+  transition: opacity 0.4s ease;
+  filter: grayscale(100%) contrast(1.2);
+}
+
+.project-wrapper:hover .project-silhouette img {
+  opacity: 0.9;
+  filter: grayscale(0%) contrast(1);
+}
+
+.project-overview {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 800px;
+}
+
+/* Quote Section */
+.quote-section {
+  padding: 160px 0;
+  text-align: center;
+  position: relative;
+}
+
+.quote-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  line-height: 1.2;
+  font-style: italic;
+  font-weight: 700;
+  max-width: 1200px;
+  margin: 0 auto 30px;
+  letter-spacing: -0.02em;
+}
+
+.quote-author {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
 }
 
 .icon-btn {
