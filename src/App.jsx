@@ -1,677 +1,1167 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import './index.css';
 
-// ---- Audio Engine ----
-const AudioEngine = {
-  ctx: null,
-  ambientOsc: null,
-  ambientNoise: null,
-  masterGain: null,
-  isMuted: false,
+export default function ImmersivePortfolio() {
+  const [phase, setPhase] = useState('entry'); // 'entry', 'transition', '3d'
+  const [clickPos, setClickPos] = useState({ x: 0, y: 0 });
+  const canvasRef = useRef(null);
+  const sceneContainerRef = useRef(null);
+  const scrollProgress = useRef(0);
+  const sceneRef = useRef(null);
+  const cameraRef = useRef(null);
+  const rendererRef = useRef(null);
+  const sectionsRef = useRef([]);
+  const [showClassic, setShowClassic] = useState(false);
 
-  init() {
-      if (this.ctx) {
-          if (this.ctx.state === 'suspended') this.ctx.resume();
-          return;
-      }
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      this.ctx = new AudioContext();
-      this.masterGain = this.ctx.createGain();
-      this.masterGain.connect(this.ctx.destination);
-      this.masterGain.gain.value = 1.0;
-  },
-  
-  playCrack() {
-      if (!this.ctx || this.isMuted) return;
-      const bufferSize = this.ctx.sampleRate * 1.5; 
-      const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.05));
-      }
-      const noise = this.ctx.createBufferSource();
-      noise.buffer = buffer;
-      const filter = this.ctx.createBiquadFilter();
-      filter.type = 'highpass';
-      filter.frequency.value = 1000;
-      noise.connect(filter);
-      filter.connect(this.masterGain);
-      noise.start();
-  },
-  
-  startAmbient() {
-      if (!this.ctx || this.ambientOsc) return;
-      // Deep drone
-      this.ambientOsc = this.ctx.createOscillator();
-      this.ambientOsc.type = 'sine';
-      this.ambientOsc.frequency.value = 45;
-      const droneGain = this.ctx.createGain();
-      droneGain.gain.value = 0.05;
-      this.ambientOsc.connect(droneGain);
-      droneGain.connect(this.masterGain);
-      this.ambientOsc.start();
-      this.ambientOsc.loop = true;
-  },
-  
-  playFootstep() {
-      if (!this.ctx || this.isMuted) return;
-      const osc = this.ctx.createOscillator();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(120, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
-      const gain = this.ctx.createGain();
-      gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
-      osc.connect(gain);
-      gain.connect(this.masterGain);
-      osc.start();
-      osc.stop(this.ctx.currentTime + 0.1);
-  },
-  
-  toggleMute() {
-      this.isMuted = !this.isMuted;
-      if (this.masterGain) {
-          this.masterGain.gain.value = this.isMuted ? 0 : 1;
-      }
-      return this.isMuted;
-  }
-};
-
-// ---- Phase 0: Entry ----
-const EntryScreen = ({ onStart }) => {
-  return (
-      <div style={{ width: '100%', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'white', color: 'black', fontFamily: 'sans-serif' }}>
-          <button 
-              onClick={(e) => {
-                  AudioEngine.init();
-                  onStart(e);
-              }}
-              style={{ padding: '15px 30px', fontSize: '20px', cursor: 'pointer', border: '2px solid black', background: 'white', borderRadius: '5px' }}
-          >
-              Start the Journey
-          </button>
-      </div>
-  );
-};
-
-// ---- Phase 1: Crack Animation ----
-const CrackTransition = ({ pos, onComplete }) => {
+  // Glass crack animation
   useEffect(() => {
-      AudioEngine.playCrack();
-      const canvas = document.getElementById('crackCanvas');
+    if (phase === 'transition' && canvasRef.current) {
+      const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      
-      // Fill white initially
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      ctx.strokeStyle = 'black';
-      ctx.lineWidth = 3;
-      
+
+      // Create crack lines
       const cracks = [];
-      const numCracks = 15;
-      for(let i=0; i<numCracks; i++) {
-          cracks.push({
-              x: pos.x, y: pos.y,
-              angle: (i / numCracks) * Math.PI * 2 + (Math.random() * 0.5),
-              length: 0,
-              maxLength: Math.max(window.innerWidth, window.innerHeight) * (Math.random() * 0.5 + 0.6)
-          });
+      const numCracks = 30;
+      
+      for (let i = 0; i < numCracks; i++) {
+        const angle = (Math.PI * 2 * i) / numCracks + (Math.random() - 0.5) * 0.5;
+        const length = 100 + Math.random() * 400;
+        cracks.push({
+          x: clickPos.x,
+          y: clickPos.y,
+          angle: angle,
+          length: 0,
+          targetLength: length,
+          branches: []
+        });
       }
 
-      let frame;
-      let progress = 0;
-      const draw = () => {
-          progress += 2;
-          ctx.beginPath();
-          cracks.forEach(c => {
-              if(c.length < c.maxLength) {
-                  let cx = pos.x;
-                  let cy = pos.y;
-                  ctx.moveTo(cx, cy);
-                  let currentAngle = c.angle;
-                  
-                  c.length += 40; 
-                  let segLen = c.length / 20;
-                  
-                  for(let j=1; j<=20; j++) {
-                      currentAngle += (Math.random() - 0.5) * 0.5;
-                      cx += Math.cos(currentAngle) * segLen;
-                      cy += Math.sin(currentAngle) * segLen;
-                      ctx.lineTo(cx, cy);
-                  }
-              }
+      // Add branches
+      cracks.forEach(crack => {
+        const numBranches = Math.floor(Math.random() * 3);
+        for (let i = 0; i < numBranches; i++) {
+          crack.branches.push({
+            startDist: Math.random() * crack.targetLength * 0.7,
+            angle: crack.angle + (Math.random() - 0.5) * Math.PI / 3,
+            length: 0,
+            targetLength: Math.random() * 100 + 50
           });
-          ctx.stroke();
+        }
+      });
+
+      let progress = 0;
+      const animate = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Background fade to transparent
+        ctx.fillStyle = `rgba(255, 255, 255, ${1 - progress})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw cracks
+        ctx.strokeStyle = `rgba(0, 0, 0, ${0.8 - progress * 0.5})`;
+        ctx.lineWidth = 2;
+
+        cracks.forEach(crack => {
+          // Main crack
+          const currentLength = Math.min(crack.length, crack.targetLength);
+          const endX = crack.x + Math.cos(crack.angle) * currentLength;
+          const endY = crack.y + Math.sin(crack.angle) * currentLength;
           
-          if(progress < 100) frame = requestAnimationFrame(draw);
+          ctx.beginPath();
+          ctx.moveTo(crack.x, crack.y);
+          ctx.lineTo(endX, endY);
+          ctx.stroke();
+
+          // Branches
+          crack.branches.forEach(branch => {
+            if (crack.length > branch.startDist) {
+              const branchStartX = crack.x + Math.cos(crack.angle) * branch.startDist;
+              const branchStartY = crack.y + Math.sin(crack.angle) * branch.startDist;
+              const branchLength = Math.min(branch.length, branch.targetLength);
+              const branchEndX = branchStartX + Math.cos(branch.angle) * branchLength;
+              const branchEndY = branchStartY + Math.sin(branch.angle) * branchLength;
+              
+              ctx.beginPath();
+              ctx.moveTo(branchStartX, branchStartY);
+              ctx.lineTo(branchEndX, branchEndY);
+              ctx.stroke();
+
+              branch.length += 8;
+            }
+          });
+
+          crack.length += 12;
+        });
+
+        progress += 0.012;
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          setPhase('3d');
+        }
       };
-      draw();
 
-      // Start fade out
-      const fadeTimeout = setTimeout(() => {
-          if (canvas) {
-              canvas.style.opacity = '0';
-              canvas.style.transition = 'opacity 1.5s ease-in';
-          }
-          setTimeout(onComplete, 1500);
-      }, 1000);
+      // Play crack sound
+      const audio = new Audio();
+      audio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBDGH0fPTgjMGHm7A7+OZSBAJT6nh8KtfFwlBmN/zuW4gBi+Cz/L';
+      audio.volume = 0.3;
+      audio.play().catch(() => {});
 
-      return () => {
-          cancelAnimationFrame(frame);
-          clearTimeout(fadeTimeout);
-      };
-  }, [pos, onComplete]);
+      animate();
+    }
+  }, [phase, clickPos]);
 
-  return <canvas id="crackCanvas" style={{ position: 'fixed', top:0, left:0, zIndex: 9999, pointerEvents: 'none', width: '100%', height: '100%' }} />;
-};
-
-// ---- Sections Data ----
-const sectionsData = [
-  { id: 1, type: 'about', title: 'ABOUT ME', z: 15, align: 'left' },
-  { id: 2, type: 'skills', title: 'SKILLS', z: 30, align: 'right' },
-  { id: 3, type: 'projects', title: 'PROJECTS', z: 45, align: 'left' },
-  { id: 4, type: 'achievements', title: 'KEY ACHIEVEMENTS', z: 60, align: 'right' },
-  { id: 5, type: 'experience', title: 'EXPERIENCE', z: 75, align: 'left' },
-  { id: 6, type: 'certs', title: 'CERTIFICATIONS', z: 90, align: 'right' },
-  { id: 7, type: 'connect', title: "LET'S BUILD SOMETHING", z: 105, align: 'center' },
-];
-
-// ---- Phase 2: 3D World ----
-const ThreeWorld = ({ onSkip, onRestart }) => {
-  const mountRef = useRef(null);
-  const sectionRefs = useRef([]);
-  const [modal, setModal] = useState(null);
-  const [muted, setMuted] = useState(false);
-  const progressRef = useRef(null);
-  const [hoveredSection, setHoveredSection] = useState(null);
-
+  // Three.js 3D Scene
   useEffect(() => {
-      AudioEngine.startAmbient();
-
-      // 1. Scene Setup
+    if (phase === '3d' && sceneContainerRef.current && !sceneRef.current) {
+      // Scene setup
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x1a0033, 0.05);
-      scene.background = new THREE.Color(0x1a0033);
+      scene.fog = new THREE.FogExp2(0x0a001a, 0.015);
+      sceneRef.current = scene;
 
-      const camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.1, 200);
-      camera.position.set(0, 3, 0);
+      // Camera
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.set(0, 3, 8);
+      cameraRef.current = camera;
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+      // Renderer
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      
-      if(mountRef.current) mountRef.current.appendChild(renderer.domElement);
+      renderer.setClearColor(0x0a001a);
+      sceneContainerRef.current.appendChild(renderer.domElement);
+      rendererRef.current = renderer;
 
-      // 2. Lights
-      const ambient = new THREE.AmbientLight(0xffffff, 0.3);
-      scene.add(ambient);
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+      scene.add(ambientLight);
 
-      const dir1 = new THREE.DirectionalLight(0x00ffff, 1.2);
-      dir1.position.set(20, 20, 0);
-      scene.add(dir1);
+      const dirLight1 = new THREE.DirectionalLight(0x00ffff, 0.5);
+      dirLight1.position.set(-10, 10, 10);
+      scene.add(dirLight1);
 
-      const dir2 = new THREE.DirectionalLight(0xff00ff, 1.2);
-      dir2.position.set(-20, 20, 0);
-      scene.add(dir2);
+      const dirLight2 = new THREE.DirectionalLight(0xff00ff, 0.3);
+      dirLight2.position.set(10, 5, -10);
+      scene.add(dirLight2);
 
-      // Point lights on neon signs
-      const pLight1 = new THREE.PointLight(0xff00aa, 2, 50);
-      pLight1.position.set(10, 5, -30);
-      scene.add(pLight1);
-
-      const pLight2 = new THREE.PointLight(0x00ffff, 2, 50);
-      pLight2.position.set(-10, 5, -70);
-      scene.add(pLight2);
-
-      const pLight3 = new THREE.PointLight(0xff00ff, 2, 50);
-      pLight3.position.set(10, 5, -100);
-      scene.add(pLight3);
-
-      // 3. World Geometry
       // Road
-      const roadGeo = new THREE.PlaneGeometry(12, 150, 1, 1);
-      const roadMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
-      const road = new THREE.Mesh(roadGeo, roadMat);
+      const roadGeometry = new THREE.PlaneGeometry(10, 120);
+      const roadMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1a0033,
+        roughness: 0.8,
+        metalness: 0.2
+      });
+      const road = new THREE.Mesh(roadGeometry, roadMaterial);
       road.rotation.x = -Math.PI / 2;
       road.position.z = -60;
       scene.add(road);
 
-      const gridHelper = new THREE.GridHelper(150, 75, 0x00ffff, 0xff00ff);
-      gridHelper.position.set(0, 0.05, -60);
-      gridHelper.scale.set(1, 1, 2);
+      // Grid lines on road
+      const gridHelper = new THREE.GridHelper(120, 60, 0x00ffff, 0x440088);
+      gridHelper.position.z = -60;
+      gridHelper.material.opacity = 0.3;
+      gridHelper.material.transparent = true;
       scene.add(gridHelper);
 
-      // Buildings (Instanced BufferGeometry)
-      const boxGeo = new THREE.BoxGeometry(1, 1, 1);
-      const boxMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.5, emissive: 0x1a0033, emissiveIntensity: 0.2 });
-      const buildingCount = 200;
-      const city = new THREE.InstancedMesh(boxGeo, boxMat, buildingCount);
-      const dummy = new THREE.Object3D();
-      
-      for(let i=0; i<buildingCount; i++) {
-          const h = Math.random() * 20 + 5;
-          const w = Math.random() * 4 + 2;
-          const d = Math.random() * 4 + 2;
-          const side = Math.random() > 0.5 ? 1 : -1;
-          const x = side * (Math.random() * 40 + 10);
-          const z = -Math.random() * 150 + 20;
-          dummy.position.set(x, h/2, z);
-          dummy.scale.set(w, h, d);
-          dummy.updateMatrix();
-          city.setMatrixAt(i, dummy.matrix);
-      }
-      scene.add(city);
+      // Character (simple capsule)
+      const characterGeometry = new THREE.CapsuleGeometry(0.5, 1.5, 4, 8);
+      const characterMaterial = new THREE.MeshStandardMaterial({
+        color: 0x00ffff,
+        emissive: 0x00ffff,
+        emissiveIntensity: 0.5,
+        roughness: 0.3,
+        metalness: 0.7
+      });
+      const character = new THREE.Mesh(characterGeometry, characterMaterial);
+      character.position.set(0, 1.5, 0);
+      scene.add(character);
 
-      // Character
-      const charGroup = new THREE.Group();
-      const bodyGeo = new THREE.CylinderGeometry(0.4, 0.3, 1.2, 8);
-      const headGeo = new THREE.SphereGeometry(0.3, 8, 8);
-      const charMat = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0x00ffff, emissiveIntensity: 0.4 });
-      const body = new THREE.Mesh(bodyGeo, charMat);
-      body.position.y = 0.6;
-      const head = new THREE.Mesh(headGeo, charMat);
-      head.position.y = 1.4;
-      charGroup.add(body);
-      charGroup.add(head);
-      charGroup.position.z = -5;
-      scene.add(charGroup);
+      // Cyberpunk buildings (simple boxes with neon)
+      const buildingPositions = [
+        [-8, 0, -20], [8, 0, -20],
+        [-8, 0, -40], [8, 0, -40],
+        [-8, 0, -60], [8, 0, -60],
+        [-8, 0, -80], [8, 0, -80],
+        [-8, 0, -100], [8, 0, -100]
+      ];
 
-      // 4. Animation & Scroll Loop
-      let currentZ = 0;
-      let targetZ = 0;
-      let lastStepZ = 0;
-      const maxZ = 120;
+      buildingPositions.forEach(([x, y, z], i) => {
+        const height = 5 + Math.random() * 10;
+        const buildingGeometry = new THREE.BoxGeometry(3, height, 3);
+        const buildingMaterial = new THREE.MeshStandardMaterial({
+          color: 0x1a0033,
+          emissive: i % 2 === 0 ? 0x00ffff : 0xff00ff,
+          emissiveIntensity: 0.2,
+          roughness: 0.7,
+          metalness: 0.3
+        });
+        const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
+        building.position.set(x, height / 2, z);
+        scene.add(building);
 
-      const handleWheel = (e) => {
-          // Increased sensitivity and normalized delta for better responsiveness
-          const delta = Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY * 0.05), 5);
-          targetZ += delta;
-          targetZ = Math.max(0, Math.min(maxZ, targetZ));
-      };
-      
-      // Keyboard support
-      const keys = { w: false, s: false, arrowup: false, arrowdown: false };
-      const handleKeyDown = (e) => { 
-          const key = e.key.toLowerCase();
-          if(keys[key] !== undefined) keys[key] = true; 
-      };
-      const handleKeyUp = (e) => { 
-          const key = e.key.toLowerCase();
-          if(keys[key] !== undefined) keys[key] = false; 
-      };
+        // Neon sign
+        const signGeometry = new THREE.PlaneGeometry(2, 0.5);
+        const signMaterial = new THREE.MeshBasicMaterial({
+          color: i % 2 === 0 ? 0x00ffff : 0xff00ff,
+          side: THREE.DoubleSide
+        });
+        const sign = new THREE.Mesh(signGeometry, signMaterial);
+        sign.position.set(x, height * 0.7, z);
+        sign.rotation.y = x > 0 ? Math.PI / 2 : -Math.PI / 2;
+        scene.add(sign);
+      });
 
-      let touchStartY = 0;
-      const handleTouchStart = (e) => {
-          touchStartY = e.touches[0].clientY;
-      };
-      const handleTouchMove = (e) => {
-          const touchY = e.touches[0].clientY;
-          const delta = (touchStartY - touchY) * 0.1;
-          targetZ += delta;
-          targetZ = Math.max(0, Math.min(maxZ, targetZ));
-          touchStartY = touchY;
-      };
+      // Section panels
+      const sections = [
+        { name: 'About Me', position: [-5, 2.5, -15], side: 'left' },
+        { name: 'Skills', position: [5, 2.5, -30], side: 'right' },
+        { name: 'Projects', position: [-5, 2.5, -45], side: 'left' },
+        { name: 'Achievements', position: [5, 2.5, -60], side: 'right' },
+        { name: 'Experience', position: [-5, 2.5, -75], side: 'left' },
+        { name: 'Certifications', position: [5, 2.5, -90], side: 'right' },
+        { name: 'Connect', position: [0, 3, -105], side: 'center' }
+      ];
 
-      window.addEventListener('wheel', handleWheel, { passive: true });
-      window.addEventListener('touchstart', handleTouchStart, { passive: true });
-      window.addEventListener('touchmove', handleTouchMove, { passive: true });
-      window.addEventListener('keydown', handleKeyDown);
-      window.addEventListener('keyup', handleKeyUp);
+      sections.forEach(section => {
+        const panelWidth = section.side === 'center' ? 8 : 4;
+        const panelHeight = section.side === 'center' ? 5 : 3.5;
+        
+        const panelGeometry = new THREE.PlaneGeometry(panelWidth, panelHeight);
+        const panelMaterial = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0,
+          roughness: 0.1,
+          metalness: 0.9,
+          emissive: 0x00ffff,
+          emissiveIntensity: 0.2,
+          side: THREE.DoubleSide
+        });
+        const panel = new THREE.Mesh(panelGeometry, panelMaterial);
+        panel.position.set(...section.position);
+        panel.userData = { name: section.name, side: section.side };
+        
+        scene.add(panel);
+        sectionsRef.current.push(panel);
 
-      let frameId;
-      const render = () => {
-          // Handle keyboard continuous movement
-          if (keys.w || keys.arrowup) targetZ += 0.6;
-          if (keys.s || keys.arrowdown) targetZ -= 0.6;
-          targetZ = Math.max(0, Math.min(maxZ, targetZ));
+        // Border glow
+        const borderGeometry = new THREE.EdgesGeometry(panelGeometry);
+        const borderMaterial = new THREE.LineBasicMaterial({
+          color: 0x00ffff,
+          transparent: true,
+          opacity: 0
+        });
+        const border = new THREE.LineSegments(borderGeometry, borderMaterial);
+        panel.add(border);
+      });
 
-          currentZ += (targetZ - currentZ) * 0.08;
+      // End wall
+      const wallGeometry = new THREE.BoxGeometry(12, 8, 1);
+      const wallMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1a0033,
+        emissive: 0xff00ff,
+        emissiveIntensity: 0.3,
+        roughness: 0.5,
+        metalness: 0.5
+      });
+      const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+      wall.position.set(0, 4, -110);
+      scene.add(wall);
+
+      // Animation loop
+      let time = 0;
+      const animate = () => {
+        requestAnimationFrame(animate);
+        time += 0.01;
+
+        // Character idle animation
+        character.position.y = 1.5 + Math.sin(time * 2) * 0.05;
+        character.rotation.y = Math.sin(time * 0.5) * 0.1;
+
+        // Camera follow with smooth interpolation
+        const targetZ = -scrollProgress.current * 110;
+        camera.position.z += (targetZ + 8 - camera.position.z) * 0.1;
+        camera.position.x += (0 - camera.position.x) * 0.05;
+        camera.lookAt(0, 2, targetZ);
+
+        // Section panel fade-in based on proximity
+        sectionsRef.current.forEach(panel => {
+          const distance = Math.abs(panel.position.z - camera.position.z);
+          let targetOpacity = 0;
           
-          camera.position.z = -currentZ;
-          charGroup.position.z = -currentZ - 4;
+          if (distance < 15) {
+            targetOpacity = Math.max(0, 1 - distance / 15) * 0.3;
+          }
+
+          panel.material.opacity += (targetOpacity - panel.material.opacity) * 0.1;
           
-          // Walking animation vs Idle animation
-          if (Math.abs(targetZ - currentZ) > 0.1) {
-              // Walking
-              charGroup.rotation.y = Math.sin(Date.now() * 0.01) * 0.2;
-              charGroup.position.y = Math.abs(Math.sin(Date.now() * 0.015)) * 0.3;
-          } else {
-              // Idle
-              charGroup.rotation.y += (0 - charGroup.rotation.y) * 0.1;
-              charGroup.position.y += (Math.sin(Date.now() * 0.005) * 0.1 - charGroup.position.y) * 0.1;
+          if (panel.children[0]) {
+            panel.children[0].material.opacity = panel.material.opacity * 3;
           }
+        });
 
-          if (progressRef.current) {
-              progressRef.current.style.width = `${Math.min(100, (currentZ / 105) * 100)}%`;
-          }
-
-          if (Math.abs(currentZ - lastStepZ) > 1.5) {
-              AudioEngine.playFootstep();
-              lastStepZ = currentZ;
-          }
-
-          // Update DOM Panels directly to bypass React state bottlenecks
-          sectionsData.forEach((sec, i) => {
-              const el = sectionRefs.current[i];
-              if (!el) return;
-              
-              const distance = sec.z - currentZ;
-              
-              let opacity = 0;
-              // Fade in when 10 units away, full opacity at 5 units
-              if (distance > 5 && distance <= 10) opacity = 1 - (distance - 5) / 5;
-              else if (distance >= -5 && distance <= 5) opacity = 1;
-              else if (distance < -5 && distance >= -15) opacity = 1 - Math.abs(distance + 5) / 10;
-              
-              if (opacity <= 0.01) {
-                  el.style.display = 'none';
-              } else {
-                  el.style.display = 'block';
-                  el.style.opacity = opacity.toString();
-                  el.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
-                  
-                  // Check if this element is hovered (from React state via data attr if we want, or just assume)
-                  const isHovered = el.getAttribute('data-hovered') === 'true';
-                  
-                  const scale = (distance > 0 ? Math.max(0.7, 1 - distance * 0.02) : Math.max(0.7, 1 + distance * 0.02)) * (isHovered ? 1.05 : 1);
-                  const yOffset = distance * 12; 
-                  
-                  let transform = `translateY(${yOffset}px) scale(${scale})`;
-                  if (sec.align === 'center') transform += ' translateX(-50%)';
-                  el.style.transform = transform;
-              }
-          });
-
-          renderer.render(scene, camera);
-          frameId = requestAnimationFrame(render);
+        renderer.render(scene, camera);
       };
-      render();
+      animate();
 
+      // Handle resize
       const handleResize = () => {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
       };
       window.addEventListener('resize', handleResize);
 
+      // Cleanup
       return () => {
-          window.removeEventListener('wheel', handleWheel);
-          window.removeEventListener('touchstart', handleTouchStart);
-          window.removeEventListener('touchmove', handleTouchMove);
-          window.removeEventListener('keydown', handleKeyDown);
-          window.removeEventListener('keyup', handleKeyUp);
-          window.removeEventListener('resize', handleResize);
-          cancelAnimationFrame(frameId);
-          if(mountRef.current && renderer.domElement) {
-            mountRef.current.removeChild(renderer.domElement);
-          }
+        window.removeEventListener('resize', handleResize);
+        if (sceneContainerRef.current && renderer.domElement) {
+          sceneContainerRef.current.removeChild(renderer.domElement);
+        }
       };
-  }, []);
+    }
+  }, [phase]);
 
-  return (
-      <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}>
-          <div ref={mountRef} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
-          
-          {/* Fixed UI */}
-          <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 100, display: 'flex', gap: '10px' }}>
-              <button className="btn" onClick={() => setMuted(AudioEngine.toggleMute())}>
-                  {muted ? 'UNMUTE' : 'MUTE'}
-              </button>
-              <button className="btn" onClick={onSkip}>Skip to Classic Portfolio</button>
-          </div>
+  // Scroll handler for 3D navigation
+  useEffect(() => {
+    if (phase === '3d') {
+      const handleScroll = (e) => {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        const scrolled = window.scrollY;
+        scrollProgress.current = Math.min(Math.max(scrolled / scrollable, 0), 1);
+      };
 
-          <div className="progress-bar">
-              <div ref={progressRef} className="progress-fill" style={{ width: '0%' }}></div>
-          </div>
-          <div style={{ position: 'fixed', bottom: '10px', width: '100%', textAlign: 'center', color: 'rgba(255,255,255,0.5)', fontSize: '12px', zIndex: 100, pointerEvents: 'none' }}>
-              SCROLL TO EXPLORE
-          </div>
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [phase]);
 
-          {/* Sections Overlay */}
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }}>
-              {sectionsData.map((sec, i) => {
-                  let left = sec.align === 'left' ? '5%' : sec.align === 'center' ? '50%' : 'auto';
-                  let right = sec.align === 'right' ? '5%' : 'auto';
-                  
-                  return (
-                      <div 
-                          key={sec.id} 
-                          ref={el => sectionRefs.current[i] = el} 
-                          className="glass-panel" 
-                          data-hovered={hoveredSection === sec.id}
-                          onMouseEnter={() => setHoveredSection(sec.id)}
-                          onMouseLeave={() => setHoveredSection(null)}
-                          style={{
-                              left, right, top: '15%',
-                              display: 'none',
-                              transformOrigin: sec.align === 'center' ? 'center center' : (sec.align === 'left' ? 'left center' : 'right center')
-                          }}
-                      >
-                          <h2 className="neon-text" style={{ margin: '0 0 20px 0', borderBottom: '1px solid rgba(255,0,255,0.5)', paddingBottom: '10px' }}>{sec.title}</h2>
-                          <SectionContent type={sec.type} setModal={setModal} onRestart={onRestart} />
-                      </div>
-                  )
-              })}
-          </div>
-
-          {/* Modal Overlay */}
-          {modal && (
-              <div className="modal-overlay" onClick={(e) => { if(e.target.className === 'modal-overlay') setModal(null); }}>
-                  <div className="modal-content">
-                      <h2 className="neon-text-magenta">{modal.title}</h2>
-                      <p style={{ lineHeight: '1.6' }}>{modal.desc}</p>
-                      <div style={{ marginTop: '20px', color: 'var(--cyan)' }}><strong>Tech Stack:</strong> {modal.tech}</div>
-                      <div style={{ marginTop: '30px', display: 'flex', gap: '15px' }}>
-                          <button className="btn" onClick={() => setModal(null)}>Close</button>
-                          <button className="btn" onClick={() => window.open(modal.link, '_blank')}>View Link</button>
-                      </div>
-                  </div>
-              </div>
-          )}
-      </div>
-  );
-};
-
-// ---- Section Specific Content Components ----
-const SectionContent = ({ type, setModal, onRestart }) => {
-  if (type === 'about') {
-      return (
-          <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
-                  <div style={{ width: '80px', height: '80px', borderRadius: '50%', border: '2px solid var(--cyan)', background: 'var(--bg-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '30px' }}>
-                      👽
-                  </div>
-                  <div>
-                      <h3 className="neon-text-magenta" style={{ margin: 0, fontSize: '24px' }}>JOHN DOE</h3>
-                      <div style={{ color: 'var(--cyan)', marginTop: '5px' }}>Cybersecurity Analyst & Dev</div>
-                  </div>
-              </div>
-              <p style={{ lineHeight: '1.6', color: '#eaeaea' }}>
-                  I bridge the gap between secure systems and immersive web experiences. Passionate about AIML, 
-                  penetration testing, and building the future of the web.
-              </p>
-              <div style={{ marginTop: '15px', color: 'var(--pink)' }}>
-                  <strong>Focus Areas:</strong> Cybersecurity, Web Development, AIML
-              </div>
-          </div>
-      );
-  }
-  if (type === 'skills') {
-      const skills = [
-          { name: 'React', icon: '⚛️' }, { name: 'Three.js', icon: '🧊' }, { name: 'Node.js', icon: '🟢' },
-          { name: 'Python', icon: '🐍' }, { name: 'Kali Linux', icon: '🐉' }, { name: 'Wireshark', icon: '🦈' },
-          { name: 'Docker', icon: '🐋' }, { name: 'AWS', icon: '☁️' }, { name: 'AIML', icon: '🧠' }
-      ];
-      return (
-          <div className="icon-grid">
-              {skills.map(s => (
-                  <div key={s.name} className="icon-box" title={s.name}>
-                      <div style={{ fontSize: '24px', marginBottom: '5px' }}>{s.icon}</div>
-                      <div style={{ fontSize: '10px' }}>{s.name}</div>
-                  </div>
-              ))}
-          </div>
-      );
-  }
-  if (type === 'projects') {
-      const projects = [
-          { id:1, title: 'Project Sentinel', desc: 'Automated network anomaly detection system.', tech: 'Python, Scikit-learn', link: '#' },
-          { id:2, title: 'CyberDash', desc: 'Real-time security analytics dashboard.', tech: 'React, D3.js', link: '#' },
-          { id:3, title: 'EncryptChat', desc: 'E2E encrypted messaging platform.', tech: 'Node, Socket.io, AES', link: '#' },
-          { id:4, title: 'Honeypot Beta', desc: 'Low-interaction honeypot data collection.', tech: 'Python, AWS', link: '#' },
-          { id:5, title: 'CryptoWallet', desc: 'Secure decentralized web wallet interface.', tech: 'React, Web3.js', link: '#' },
-          { id:6, title: 'AI Fuzzer', desc: 'ML-powered payload generator for fuzzing.', tech: 'TensorFlow, Python', link: '#' },
-      ];
-      return (
-          <div className="project-grid">
-              {projects.map(p => (
-                  <div key={p.id} className="project-card" onClick={() => setModal(p)}>
-                      <h4 style={{ margin: '0 0 10px 0', color: 'var(--cyan)' }}>{p.title}</h4>
-                      <p style={{ fontSize: '12px', margin: 0, color: '#ccc' }}>{p.desc}</p>
-                  </div>
-              ))}
-          </div>
-      );
-  }
-  if (type === 'achievements') {
-      return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              <div className="icon-box" style={{ textAlign: 'left', display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <span style={{ fontSize: '30px' }}>🏆</span>
-                  <div>
-                      <strong style={{ color: 'var(--cyan)' }}>DefCon Qualifier 2025</strong><br/>
-                      <span style={{ fontSize: '12px' }}>Top 50 team placement globally</span>
-                  </div>
-              </div>
-              <div className="icon-box" style={{ textAlign: 'left', display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <span style={{ fontSize: '30px' }}>🎯</span>
-                  <div>
-                      <strong style={{ color: 'var(--magenta)' }}>HackTheBox Pro</strong><br/>
-                      <span style={{ fontSize: '12px' }}>Achieved Elite Hacker rank</span>
-                  </div>
-              </div>
-              <div className="icon-box" style={{ textAlign: 'left', display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <span style={{ fontSize: '30px' }}>🚀</span>
-                  <div>
-                      <strong style={{ color: 'var(--cyan)' }}>Open Source Impact</strong><br/>
-                      <span style={{ fontSize: '12px' }}>50+ merged PRs in major security tools</span>
-                  </div>
-              </div>
-          </div>
-      );
-  }
-  if (type === 'experience') {
-      return (
-          <div className="timeline">
-              <div className="timeline-item">
-                  <h4 style={{ margin: 0, color: 'var(--cyan)' }}>Security Analyst</h4>
-                  <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '5px' }}>CyberTech Inc | 2024 - Present</div>
-                  <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '14px', lineHeight: '1.4' }}>
-                      <li>Conducted vulnerability assessments and pentesting</li>
-                      <li>Reduced critical system vulnerabilities by 40%</li>
-                  </ul>
-              </div>
-              <div className="timeline-item">
-                  <h4 style={{ margin: 0, color: 'var(--magenta)' }}>Frontend Developer</h4>
-                  <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '5px' }}>WebSolutions | 2023 - 2024</div>
-                  <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '14px', lineHeight: '1.4' }}>
-                      <li>Built interactive React dashboards for clients</li>
-                      <li>Optimized application performance reaching 98 Lighthouse</li>
-                  </ul>
-              </div>
-          </div>
-      );
-  }
-  if (type === 'certs') {
-      const certs = ['CEH Certified', 'CompTIA Security+', 'AWS Solutions Arch'];
-      return (
-          <div style={{ display: 'flex', overflowX: 'auto', gap: '15px', paddingBottom: '10px' }}>
-              {certs.map((c, i) => (
-                  <div key={i} className="project-card" style={{ minWidth: '150px', flexShrink: 0 }}>
-                      <div style={{ height: '80px', background: 'rgba(255,255,255,0.05)', borderRadius: '5px', marginBottom: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '30px' }}>
-                          📜
-                      </div>
-                      <h4 style={{ margin: '0 0 5px 0', textAlign: 'center', color: 'var(--cyan)', fontSize: '14px' }}>{c}</h4>
-                  </div>
-              ))}
-          </div>
-      );
-  }
-  if (type === 'connect') {
-      return (
-          <div style={{ textAlign: 'center' }}>
-              <p style={{ fontSize: '16px', marginBottom: '30px' }}>Ready to collaborate on the next big thing in Web Development or Cybersecurity?</p>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '40px' }}>
-                  <a href="#" className="btn" style={{ textDecoration: 'none' }}>GitHub</a>
-                  <a href="#" className="btn" style={{ textDecoration: 'none' }}>LinkedIn</a>
-                  <a href="#" className="btn" style={{ textDecoration: 'none' }}>Email</a>
-              </div>
-              <button className="btn" onClick={onRestart} style={{ borderColor: 'var(--magenta)', color: 'var(--magenta)', background: 'transparent' }}>
-                  Start Journey Again
-              </button>
-          </div>
-      );
-  }
-  return null;
-};
-
-// ---- Phase 3: Classic Fallback ----
-const ClassicPortfolio = ({ onRestart }) => {
-  return (
-      <div className="classic-body">
-          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <h1 style={{ color: '#1a0033', margin: 0 }}>John Doe - Portfolio</h1>
-                  <button onClick={onRestart} style={{ padding: '10px 20px', cursor: 'pointer', background: '#1a0033', color: 'white', border: 'none', borderRadius: '5px' }}>Back to 3D View</button>
-              </div>
-              <hr style={{ borderColor: '#ccc' }} />
-              <h2 style={{ color: '#00ffff', textShadow: '0 0 2px #00ffff', background: '#1a0033', padding: '10px', display: 'inline-block' }}>About Me</h2>
-              <p>I bridge the gap between secure systems and immersive web experiences. Passionate about AIML, penetration testing, and building the future of the web.</p>
-              
-              <h2 style={{ color: '#ff00ff', textShadow: '0 0 2px #ff00ff', background: '#1a0033', padding: '10px', display: 'inline-block', marginTop: '20px' }}>Skills</h2>
-              <ul>
-                  <li>React, Three.js, Node.js</li>
-                  <li>Python, Cybersecurity, Pentesting, AIML</li>
-              </ul>
-              
-              <h2 style={{ color: '#00ffff', textShadow: '0 0 2px #00ffff', background: '#1a0033', padding: '10px', display: 'inline-block', marginTop: '20px' }}>Projects</h2>
-              <div style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '5px', marginBottom: '10px', background: 'white', color: '#333' }}>
-                  <h3 style={{ margin: '0 0 10px 0' }}>Project Sentinel</h3>
-                  <p style={{ margin: 0 }}>Automated network anomaly detection system.</p>
-              </div>
-              <div style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '5px', background: 'white', color: '#333' }}>
-                  <h3 style={{ margin: '0 0 10px 0' }}>CyberDash</h3>
-                  <p style={{ margin: 0 }}>Real-time security analytics dashboard.</p>
-              </div>
-              
-              <h2 style={{ color: '#ff00ff', textShadow: '0 0 2px #ff00ff', background: '#1a0033', padding: '10px', display: 'inline-block', marginTop: '20px' }}>Experience</h2>
-              <p><strong>Security Analyst</strong> at CyberTech Inc (2024 - Present)</p>
-              <p><strong>Frontend Developer</strong> at WebSolutions (2023 - 2024)</p>
-          </div>
-      </div>
-  );
-};
-
-// ---- Main App Component ----
-export default function App() {
-  const [phase, setPhase] = useState(0);
-  const [clickPos, setClickPos] = useState({x: 0, y: 0});
-
-  const handleStart = (e) => {
-      setClickPos({ x: e.clientX, y: e.clientY });
-      setPhase(1);
+  const handleStartJourney = (e) => {
+    setClickPos({ x: e.clientX, y: e.clientY });
+    setPhase('transition');
   };
 
-  return (
-      <div style={{ width: '100%', height: '100%' }}>
-          {phase === 0 && <EntryScreen onStart={handleStart} />}
-          {phase === 1 && <CrackTransition pos={clickPos} onComplete={() => setPhase(2)} />}
-          {phase === 2 && <ThreeWorld onSkip={() => setPhase(3)} onRestart={() => setPhase(0)} />}
-          {phase === 3 && <ClassicPortfolio onRestart={() => setPhase(0)} />}
+  const restartJourney = () => {
+    window.scrollTo(0, 0);
+    scrollProgress.current = 0;
+    setPhase('entry');
+  };
+
+  if (showClassic) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        padding: '60px 20px',
+        fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif'
+      }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <button 
+            onClick={() => setShowClassic(false)}
+            style={{
+              position: 'fixed',
+              top: '20px',
+              right: '20px',
+              padding: '12px 24px',
+              background: 'rgba(255,255,255,0.2)',
+              border: '2px solid white',
+              borderRadius: '8px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+              zIndex: 1000
+            }}
+          >
+            Back to 3D
+          </button>
+
+          <h1 style={{ fontSize: '48px', marginBottom: '10px' }}>Your Name</h1>
+          <p style={{ fontSize: '20px', opacity: 0.9, marginBottom: '40px' }}>
+            Cybersecurity • Web Development • AI/ML
+          </p>
+
+          <section style={{ marginBottom: '50px' }}>
+            <h2 style={{ fontSize: '32px', marginBottom: '20px' }}>About Me</h2>
+            <p style={{ lineHeight: '1.8', fontSize: '18px' }}>
+              Passionate technologist focused on building secure, intelligent systems. 
+              Experience spans web development, security research, and machine learning applications.
+            </p>
+          </section>
+
+          <section style={{ marginBottom: '50px' }}>
+            <h2 style={{ fontSize: '32px', marginBottom: '20px' }}>Skills</h2>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+              {['React', 'Node.js', 'Python', 'Cybersecurity', 'Machine Learning', 'Docker', 'AWS', 'Penetration Testing'].map(skill => (
+                <span key={skill} style={{
+                  padding: '10px 20px',
+                  background: 'rgba(255,255,255,0.2)',
+                  borderRadius: '20px',
+                  fontSize: '16px'
+                }}>{skill}</span>
+              ))}
+            </div>
+          </section>
+
+          <section style={{ marginBottom: '50px' }}>
+            <h2 style={{ fontSize: '32px', marginBottom: '20px' }}>Contact</h2>
+            <div style={{ display: 'flex', gap: '20px', fontSize: '18px' }}>
+              <a href="#" style={{ color: 'white', textDecoration: 'underline' }}>GitHub</a>
+              <a href="#" style={{ color: 'white', textDecoration: 'underline' }}>LinkedIn</a>
+              <a href="#" style={{ color: 'white', textDecoration: 'underline' }}>Email</a>
+            </div>
+          </section>
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div style={{ 
+      margin: 0, 
+      padding: 0, 
+      width: '100%',
+      minHeight: phase === '3d' ? '400vh' : '100vh',
+      position: 'relative',
+      overflow: phase === '3d' ? 'auto' : 'hidden'
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap');
+        
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          overflow-x: hidden;
+        }
+
+        .glass-panel {
+          background: rgba(0, 255, 255, 0.05);
+          backdrop-filter: blur(10px);
+          border: 2px solid rgba(0, 255, 255, 0.3);
+          border-radius: 12px;
+          padding: 30px;
+          box-shadow: 0 8px 32px rgba(0, 255, 255, 0.1),
+                      inset 0 0 20px rgba(0, 255, 255, 0.05);
+          transition: all 0.3s ease;
+        }
+
+        .glass-panel:hover {
+          border-color: rgba(0, 255, 255, 0.6);
+          box-shadow: 0 8px 32px rgba(0, 255, 255, 0.3),
+                      inset 0 0 30px rgba(0, 255, 255, 0.1);
+          transform: scale(1.02);
+        }
+
+        .neon-text {
+          color: #00ffff;
+          text-shadow: 0 0 10px #00ffff,
+                       0 0 20px #00ffff,
+                       0 0 30px #00ffff;
+          font-family: 'Orbitron', sans-serif;
+        }
+
+        .skill-icon {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .skill-icon:hover {
+          transform: scale(1.2);
+          box-shadow: 0 0 20px currentColor;
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
+
+      {/* Skip Button - Always visible */}
+      <button
+        onClick={() => setShowClassic(true)}
+        style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          padding: '12px 24px',
+          background: 'rgba(0, 255, 255, 0.1)',
+          backdropFilter: 'blur(10px)',
+          border: '2px solid rgba(0, 255, 255, 0.5)',
+          borderRadius: '8px',
+          color: '#00ffff',
+          cursor: 'pointer',
+          fontSize: '14px',
+          fontWeight: '600',
+          fontFamily: 'Orbitron, sans-serif',
+          zIndex: 10000,
+          transition: 'all 0.3s ease',
+          textShadow: '0 0 10px #00ffff'
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.background = 'rgba(0, 255, 255, 0.2)';
+          e.target.style.boxShadow = '0 0 20px rgba(0, 255, 255, 0.5)';
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.background = 'rgba(0, 255, 255, 0.1)';
+          e.target.style.boxShadow = 'none';
+        }}
+      >
+        Skip to Classic Portfolio
+      </button>
+
+      {/* Phase 0: Entry Screen */}
+      {phase === 'entry' && (
+        <div style={{
+          width: '100%',
+          height: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'white'
+        }}>
+          <button
+            onClick={handleStartJourney}
+            style={{
+              padding: '15px 30px',
+              fontSize: '16px',
+              background: 'white',
+              border: '1px solid black',
+              cursor: 'pointer'
+            }}
+          >
+            Start the Journey
+          </button>
+        </div>
+      )}
+
+      {/* Phase 1: Transition */}
+      {phase === 'transition' && (
+        <canvas
+          ref={canvasRef}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 9999
+          }}
+        />
+      )}
+
+      {/* Phase 2: 3D World */}
+      {phase === '3d' && (
+        <>
+          <div
+            ref={sceneContainerRef}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100vh',
+              zIndex: 1
+            }}
+          />
+
+          {/* Scroll Progress Indicator */}
+          <div style={{
+            position: 'fixed',
+            bottom: '20px',
+            left: '20px',
+            padding: '10px 20px',
+            background: 'rgba(0, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '2px solid rgba(0, 255, 255, 0.3)',
+            borderRadius: '8px',
+            color: '#00ffff',
+            fontFamily: 'Orbitron, sans-serif',
+            fontSize: '14px',
+            zIndex: 100
+          }}>
+            Progress: {Math.round(scrollProgress.current * 100)}%
+          </div>
+
+          {/* Content Overlays */}
+          <div style={{
+            position: 'absolute',
+            top: '100vh',
+            left: '0',
+            width: '100%',
+            zIndex: 10,
+            pointerEvents: 'none'
+          }}>
+            {/* Section 1: About Me */}
+            <div style={{
+              position: 'absolute',
+              top: '15vh',
+              left: '5%',
+              width: '400px',
+              pointerEvents: 'all'
+            }}>
+              <div className="glass-panel">
+                <h2 className="neon-text" style={{ fontSize: '32px', marginBottom: '20px', fontWeight: '900' }}>
+                  ABOUT ME
+                </h2>
+                <div style={{ 
+                  width: '120px', 
+                  height: '120px', 
+                  borderRadius: '50%', 
+                  background: 'linear-gradient(135deg, #00ffff, #ff00ff)',
+                  marginBottom: '20px',
+                  boxShadow: '0 0 30px rgba(0, 255, 255, 0.5)'
+                }}></div>
+                <h3 style={{ 
+                  color: 'white', 
+                  fontSize: '24px', 
+                  marginBottom: '10px',
+                  fontFamily: 'Orbitron, sans-serif'
+                }}>
+                  Your Name
+                </h3>
+                <p style={{ 
+                  color: 'rgba(255, 255, 255, 0.8)', 
+                  lineHeight: '1.6',
+                  fontFamily: 'Rajdhani, sans-serif',
+                  fontSize: '16px'
+                }}>
+                  Digital architect crafting secure, intelligent systems at the intersection of 
+                  cybersecurity, web development, and artificial intelligence. Passionate about 
+                  building the future, one line of code at a time.
+                </p>
+                <div style={{ 
+                  marginTop: '15px', 
+                  display: 'flex', 
+                  gap: '10px',
+                  flexWrap: 'wrap'
+                }}>
+                  {['Cybersecurity', 'Web Dev', 'AI/ML'].map(tag => (
+                    <span key={tag} style={{
+                      padding: '6px 12px',
+                      background: 'rgba(255, 0, 255, 0.2)',
+                      border: '1px solid rgba(255, 0, 255, 0.5)',
+                      borderRadius: '4px',
+                      color: '#ff00ff',
+                      fontSize: '12px',
+                      fontFamily: 'Rajdhani, sans-serif',
+                      fontWeight: '600'
+                    }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Skills */}
+            <div style={{
+              position: 'absolute',
+              top: '120vh',
+              right: '5%',
+              width: '450px',
+              pointerEvents: 'all'
+            }}>
+              <div className="glass-panel">
+                <h2 className="neon-text" style={{ fontSize: '32px', marginBottom: '25px', fontWeight: '900' }}>
+                  SKILLS
+                </h2>
+                
+                <div style={{ marginBottom: '20px' }}>
+                  <h4 style={{ 
+                    color: '#00ffff', 
+                    fontSize: '16px', 
+                    marginBottom: '12px',
+                    fontFamily: 'Orbitron, sans-serif'
+                  }}>
+                    Web Development
+                  </h4>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    {['React', 'Node.js', 'TypeScript', 'Next.js', 'GraphQL'].map(skill => (
+                      <div key={skill} className="skill-icon" style={{
+                        padding: '10px 16px',
+                        background: 'rgba(0, 255, 255, 0.1)',
+                        border: '1px solid rgba(0, 255, 255, 0.3)',
+                        borderRadius: '6px',
+                        color: 'white',
+                        fontSize: '13px',
+                        fontFamily: 'Rajdhani, sans-serif',
+                        cursor: 'pointer'
+                      }}>
+                        {skill}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <h4 style={{ 
+                    color: '#ff00ff', 
+                    fontSize: '16px', 
+                    marginBottom: '12px',
+                    fontFamily: 'Orbitron, sans-serif'
+                  }}>
+                    Cybersecurity
+                  </h4>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    {['Penetration Testing', 'Burp Suite', 'Metasploit', 'Wireshark', 'OWASP'].map(skill => (
+                      <div key={skill} className="skill-icon" style={{
+                        padding: '10px 16px',
+                        background: 'rgba(255, 0, 255, 0.1)',
+                        border: '1px solid rgba(255, 0, 255, 0.3)',
+                        borderRadius: '6px',
+                        color: 'white',
+                        fontSize: '13px',
+                        fontFamily: 'Rajdhani, sans-serif',
+                        cursor: 'pointer'
+                      }}>
+                        {skill}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 style={{ 
+                    color: '#00ff88', 
+                    fontSize: '16px', 
+                    marginBottom: '12px',
+                    fontFamily: 'Orbitron, sans-serif'
+                  }}>
+                    AI/ML
+                  </h4>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    {['TensorFlow', 'PyTorch', 'Scikit-learn', 'OpenAI API', 'Computer Vision'].map(skill => (
+                      <div key={skill} className="skill-icon" style={{
+                        padding: '10px 16px',
+                        background: 'rgba(0, 255, 136, 0.1)',
+                        border: '1px solid rgba(0, 255, 136, 0.3)',
+                        borderRadius: '6px',
+                        color: 'white',
+                        fontSize: '13px',
+                        fontFamily: 'Rajdhani, sans-serif',
+                        cursor: 'pointer'
+                      }}>
+                        {skill}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3: Projects */}
+            <div style={{
+              position: 'absolute',
+              top: '200vh',
+              left: '5%',
+              width: '500px',
+              pointerEvents: 'all'
+            }}>
+              <div className="glass-panel">
+                <h2 className="neon-text" style={{ fontSize: '32px', marginBottom: '25px', fontWeight: '900' }}>
+                  PROJECTS
+                </h2>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(2, 1fr)', 
+                  gap: '15px' 
+                }}>
+                  {[
+                    { name: 'SecureAuth System', tech: 'Node.js, JWT', desc: 'Zero-trust authentication' },
+                    { name: 'AI Threat Detector', tech: 'Python, TensorFlow', desc: 'ML-powered security' },
+                    { name: 'Blockchain Explorer', tech: 'React, Web3', desc: 'Real-time crypto tracking' },
+                    { name: 'Vulnerability Scanner', tech: 'Python, Nmap', desc: 'Automated pentesting' },
+                    { name: 'Smart Dashboard', tech: 'Next.js, D3.js', desc: 'Analytics platform' },
+                    { name: 'Encryption Suite', tech: 'Go, AES', desc: 'End-to-end encryption' }
+                  ].map((project, i) => (
+                    <div key={i} style={{
+                      padding: '20px',
+                      background: 'rgba(0, 255, 255, 0.05)',
+                      border: '1px solid rgba(0, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-5px)';
+                      e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 255, 255, 0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}>
+                      <h4 style={{ 
+                        color: '#00ffff', 
+                        fontSize: '16px', 
+                        marginBottom: '8px',
+                        fontFamily: 'Orbitron, sans-serif'
+                      }}>
+                        {project.name}
+                      </h4>
+                      <p style={{ 
+                        color: 'rgba(255, 255, 255, 0.6)', 
+                        fontSize: '12px',
+                        marginBottom: '8px',
+                        fontFamily: 'Rajdhani, sans-serif'
+                      }}>
+                        {project.desc}
+                      </p>
+                      <p style={{ 
+                        color: '#ff00ff', 
+                        fontSize: '11px',
+                        fontFamily: 'Rajdhani, sans-serif',
+                        fontWeight: '600'
+                      }}>
+                        {project.tech}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Section 4: Achievements */}
+            <div style={{
+              position: 'absolute',
+              top: '280vh',
+              right: '5%',
+              width: '420px',
+              pointerEvents: 'all'
+            }}>
+              <div className="glass-panel">
+                <h2 className="neon-text" style={{ fontSize: '32px', marginBottom: '25px', fontWeight: '900' }}>
+                  ACHIEVEMENTS
+                </h2>
+                {[
+                  { icon: '🏆', title: 'CTF Champion', desc: 'Top 3 at CyberSec CTF 2024' },
+                  { icon: '🎓', title: 'CEH Certified', desc: 'Ethical Hacking certification' },
+                  { icon: '⭐', title: 'Open Source', desc: '500+ GitHub contributions' },
+                  { icon: '🚀', title: 'Startup Launch', desc: 'Co-founded SecureTech startup' }
+                ].map((achievement, i) => (
+                  <div key={i} style={{
+                    padding: '15px',
+                    marginBottom: '12px',
+                    background: 'rgba(255, 0, 255, 0.05)',
+                    border: '1px solid rgba(255, 0, 255, 0.2)',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    gap: '15px',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 0, 255, 0.1)';
+                    e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 0, 255, 0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 0, 255, 0.05)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}>
+                    <div style={{ fontSize: '32px' }}>{achievement.icon}</div>
+                    <div>
+                      <h4 style={{ 
+                        color: '#ff00ff', 
+                        fontSize: '16px', 
+                        marginBottom: '4px',
+                        fontFamily: 'Orbitron, sans-serif'
+                      }}>
+                        {achievement.title}
+                      </h4>
+                      <p style={{ 
+                        color: 'rgba(255, 255, 255, 0.7)', 
+                        fontSize: '13px',
+                        fontFamily: 'Rajdhani, sans-serif'
+                      }}>
+                        {achievement.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Section 5: Experience */}
+            <div style={{
+              position: 'absolute',
+              top: '350vh',
+              left: '5%',
+              width: '480px',
+              pointerEvents: 'all'
+            }}>
+              <div className="glass-panel">
+                <h2 className="neon-text" style={{ fontSize: '32px', marginBottom: '25px', fontWeight: '900' }}>
+                  EXPERIENCE
+                </h2>
+                <div style={{ position: 'relative', paddingLeft: '30px' }}>
+                  {/* Timeline line */}
+                  <div style={{
+                    position: 'absolute',
+                    left: '10px',
+                    top: '0',
+                    bottom: '0',
+                    width: '2px',
+                    background: 'linear-gradient(to bottom, #00ffff, #ff00ff)',
+                    opacity: '0.5'
+                  }}></div>
+
+                  {[
+                    { 
+                      role: 'Security Researcher', 
+                      org: 'CyberDefense Labs', 
+                      period: '2023 - Present',
+                      tasks: ['Conducted penetration testing', 'Developed security tools']
+                    },
+                    { 
+                      role: 'Full Stack Developer', 
+                      org: 'TechInnovate Inc', 
+                      period: '2022 - 2023',
+                      tasks: ['Built scalable web apps', 'Led frontend architecture']
+                    },
+                    { 
+                      role: 'ML Engineering Intern', 
+                      org: 'AI Solutions Co', 
+                      period: '2021 - 2022',
+                      tasks: ['Trained computer vision models', 'Optimized inference pipeline']
+                    }
+                  ].map((exp, i) => (
+                    <div key={i} style={{ marginBottom: '25px', position: 'relative' }}>
+                      {/* Timeline dot */}
+                      <div style={{
+                        position: 'absolute',
+                        left: '-25px',
+                        top: '5px',
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        background: i % 2 === 0 ? '#00ffff' : '#ff00ff',
+                        boxShadow: `0 0 10px ${i % 2 === 0 ? '#00ffff' : '#ff00ff'}`
+                      }}></div>
+
+                      <h4 style={{ 
+                        color: '#00ffff', 
+                        fontSize: '18px', 
+                        marginBottom: '5px',
+                        fontFamily: 'Orbitron, sans-serif'
+                      }}>
+                        {exp.role}
+                      </h4>
+                      <p style={{ 
+                        color: '#ff00ff', 
+                        fontSize: '14px',
+                        marginBottom: '5px',
+                        fontFamily: 'Rajdhani, sans-serif',
+                        fontWeight: '600'
+                      }}>
+                        {exp.org} • {exp.period}
+                      </p>
+                      <ul style={{ 
+                        color: 'rgba(255, 255, 255, 0.7)', 
+                        fontSize: '13px',
+                        marginLeft: '20px',
+                        fontFamily: 'Rajdhani, sans-serif',
+                        lineHeight: '1.6'
+                      }}>
+                        {exp.tasks.map((task, j) => (
+                          <li key={j}>{task}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Section 6: Certifications */}
+            <div style={{
+              position: 'absolute',
+              top: '430vh',
+              right: '5%',
+              width: '440px',
+              pointerEvents: 'all'
+            }}>
+              <div className="glass-panel">
+                <h2 className="neon-text" style={{ fontSize: '32px', marginBottom: '25px', fontWeight: '900' }}>
+                  CERTIFICATIONS
+                </h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                  {[
+                    { name: 'Certified Ethical Hacker', org: 'EC-Council', year: '2024' },
+                    { name: 'AWS Solutions Architect', org: 'Amazon', year: '2023' },
+                    { name: 'CompTIA Security+', org: 'CompTIA', year: '2023' },
+                    { name: 'TensorFlow Developer', org: 'Google', year: '2022' }
+                  ].map((cert, i) => (
+                    <div key={i} style={{
+                      padding: '18px',
+                      background: 'rgba(0, 255, 255, 0.05)',
+                      border: '1px solid rgba(0, 255, 255, 0.3)',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'rotateY(5deg) translateY(-3px)';
+                      e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 255, 255, 0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'rotateY(0) translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}>
+                      <div style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #00ffff, #ff00ff)',
+                        opacity: '0.3'
+                      }}></div>
+                      <h4 style={{ 
+                        color: '#00ffff', 
+                        fontSize: '16px', 
+                        marginBottom: '6px',
+                        fontFamily: 'Orbitron, sans-serif'
+                      }}>
+                        {cert.name}
+                      </h4>
+                      <p style={{ 
+                        color: 'rgba(255, 255, 255, 0.6)', 
+                        fontSize: '13px',
+                        fontFamily: 'Rajdhani, sans-serif'
+                      }}>
+                        {cert.org} • {cert.year}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Section 7: Connect Wall */}
+            <div style={{
+              position: 'absolute',
+              top: '500vh',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '600px',
+              pointerEvents: 'all'
+            }}>
+              <div className="glass-panel" style={{ textAlign: 'center', padding: '50px' }}>
+                <h2 className="neon-text" style={{ 
+                  fontSize: '42px', 
+                  marginBottom: '20px', 
+                  fontWeight: '900',
+                  animation: 'pulse 2s infinite'
+                }}>
+                  LET'S BUILD SOMETHING
+                </h2>
+                <p style={{ 
+                  color: 'rgba(255, 255, 255, 0.8)', 
+                  fontSize: '18px',
+                  marginBottom: '35px',
+                  fontFamily: 'Rajdhani, sans-serif',
+                  lineHeight: '1.6'
+                }}>
+                  Ready to collaborate on the next big thing? Let's connect and create something extraordinary.
+                </p>
+
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  gap: '25px',
+                  marginBottom: '35px'
+                }}>
+                  {[
+                    { name: 'GitHub', icon: '⚡', color: '#00ffff' },
+                    { name: 'LinkedIn', icon: '💼', color: '#ff00ff' },
+                    { name: 'Email', icon: '📧', color: '#00ff88' }
+                  ].map((link) => (
+                    <a
+                      key={link.name}
+                      href="#"
+                      style={{
+                        width: '80px',
+                        height: '80px',
+                        borderRadius: '12px',
+                        background: `rgba(${link.color === '#00ffff' ? '0,255,255' : link.color === '#ff00ff' ? '255,0,255' : '0,255,136'},0.1)`,
+                        border: `2px solid ${link.color}`,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        textDecoration: 'none',
+                        transition: 'all 0.3s ease',
+                        cursor: 'pointer'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-10px)';
+                        e.currentTarget.style.boxShadow = `0 10px 40px ${link.color}`;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                    >
+                      <div style={{ fontSize: '32px', marginBottom: '5px' }}>{link.icon}</div>
+                      <span style={{ 
+                        color: link.color, 
+                        fontSize: '12px',
+                        fontFamily: 'Orbitron, sans-serif',
+                        fontWeight: '600'
+                      }}>
+                        {link.name}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+
+                <button
+                  onClick={restartJourney}
+                  style={{
+                    padding: '15px 40px',
+                    background: 'rgba(255, 0, 255, 0.2)',
+                    border: '2px solid #ff00ff',
+                    borderRadius: '8px',
+                    color: '#ff00ff',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    fontFamily: 'Orbitron, sans-serif',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    textShadow: '0 0 10px #ff00ff'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = 'rgba(255, 0, 255, 0.4)';
+                    e.target.style.boxShadow = '0 0 30px #ff00ff';
+                    e.target.style.transform = 'scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'rgba(255, 0, 255, 0.2)';
+                    e.target.style.boxShadow = 'none';
+                    e.target.style.transform = 'scale(1)';
+                  }}
+                >
+                  ↻ Start the Journey Again
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
