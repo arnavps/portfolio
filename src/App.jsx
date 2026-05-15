@@ -212,31 +212,34 @@ export default function App() {
         </div>
       </section>
 
-      {/* Education & Certs */}
+      {/* Education */}
       <section style={{ paddingTop: '100px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '80px' }}>
-          
-          <div>
-            <h2 className="section-title" style={{ marginBottom: '40px' }}>Education</h2>
-            <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '30px', paddingBottom: '30px' }}>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px' }}>B.S. Cybersecurity (Example)</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '8px' }}>University Name</p>
-              <p style={{ fontFamily: '"Courier New", monospace', fontSize: '0.9rem', color: '#888' }}>2019 - 2023</p>
-            </div>
+        <h2 className="section-title">Education</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px' }}>
+          <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '30px' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px' }}>B.Tech</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '8px' }}>University Name Placeholder</p>
+            <p style={{ fontFamily: '"Courier New", monospace', fontSize: '0.9rem', color: '#888' }}>2021 - 2025</p>
           </div>
+          <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '30px' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px' }}>HSC</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '8px' }}>High School Name Placeholder</p>
+            <p style={{ fontFamily: '"Courier New", monospace', fontSize: '0.9rem', color: '#888' }}>2019 - 2021</p>
+          </div>
+        </div>
+      </section>
 
-          <div>
-            <h2 className="section-title" style={{ marginBottom: '40px' }}>Certifications</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '30px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fdfdfd', padding: '20px', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px' }}>
-                <span style={{ fontSize: '1.2rem', fontWeight: 600 }}>Offensive Security Certified Professional (OSCP)</span>
-                <span style={{ fontFamily: '"Courier New", monospace', color: 'var(--text-secondary)' }}>Active</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fdfdfd', padding: '20px', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px' }}>
-                <span style={{ fontSize: '1.2rem', fontWeight: 600 }}>CompTIA Security+</span>
-                <span style={{ fontFamily: '"Courier New", monospace', color: 'var(--text-secondary)' }}>Active</span>
-              </div>
-            </div>
+      {/* Certifications */}
+      <section style={{ paddingTop: '100px' }}>
+        <h2 className="section-title">Certifications</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '40px' }}>
+          <div className="cert-silhouette">
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '10px' }}>OSCP</h3>
+            <p style={{ color: '#aaa', fontFamily: '"Courier New", monospace' }}>Offensive Security Certified Professional</p>
+          </div>
+          <div className="cert-silhouette">
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '10px' }}>Security+</h3>
+            <p style={{ color: '#aaa', fontFamily: '"Courier New", monospace' }}>CompTIA</p>
           </div>
         </div>
       </section>
@@ -263,9 +266,8 @@ export default function App() {
       {/* Quote Section */}
       <section className="quote-section">
         <h2 className="quote-text">
-          "Amateurs hack systems, professionals hack people."
+          "Thinking like an attacker is not about the tool you use; it’s about figuring out how things connect in ways the creator never imagined."
         </h2>
-        <div className="quote-author">Bruce Schneier</div>
       </section>
       
       {/* Footer */}
