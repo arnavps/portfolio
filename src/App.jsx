@@ -329,17 +329,56 @@ export default function ImmersivePortfolio() {
     }
   }, [phase]);
 
-  // Scroll handler for 3D navigation
+  // Scroll and Keyboard handler for 3D navigation
   useEffect(() => {
     if (phase === '3d') {
-      const handleScroll = (e) => {
+      const handleScroll = () => {
         const scrollable = document.documentElement.scrollHeight - window.innerHeight;
         const scrolled = window.scrollY;
-        scrollProgress.current = Math.min(Math.max(scrolled / scrollable, 0), 1);
+        // Avoid division by zero if scrollable is 0
+        if (scrollable > 0) {
+          scrollProgress.current = Math.min(Math.max(scrolled / scrollable, 0), 1);
+        }
       };
 
       window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
+
+      // Keyboard support for W/S and Arrows
+      const keys = { w: false, s: false, arrowup: false, arrowdown: false };
+      const handleKeyDown = (e) => {
+        const key = e.key.toLowerCase();
+        if (keys[key] !== undefined) keys[key] = true;
+      };
+      const handleKeyUp = (e) => {
+        const key = e.key.toLowerCase();
+        if (keys[key] !== undefined) keys[key] = false;
+      };
+
+      window.addEventListener('keydown', handleKeyDown);
+      window.addEventListener('keyup', handleKeyUp);
+
+      let frameId;
+      const scrollSpeed = 20; // px per frame
+      const updateScroll = () => {
+        let dy = 0;
+        // W or ArrowUp moves forward -> scrolls down the page
+        if (keys.w || keys.arrowup) dy += scrollSpeed;
+        // S or ArrowDown moves backward -> scrolls up the page
+        if (keys.s || keys.arrowdown) dy -= scrollSpeed;
+        
+        if (dy !== 0) {
+          window.scrollBy(0, dy);
+        }
+        frameId = requestAnimationFrame(updateScroll);
+      };
+      updateScroll();
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+        window.removeEventListener('keydown', handleKeyDown);
+        window.removeEventListener('keyup', handleKeyUp);
+        cancelAnimationFrame(frameId);
+      };
     }
   }, [phase]);
 
