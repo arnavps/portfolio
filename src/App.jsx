@@ -41,19 +41,19 @@ export default function App() {
       </header>
 
       {/* Hero */}
-      <section style={{ paddingTop: '80px', paddingBottom: '120px', position: 'relative' }}>
+      <section style={{ paddingTop: '40px', paddingBottom: '60px', position: 'relative' }}>
         <div className="blob" style={{ width: '800px', height: '800px', top: '-10%', right: '-5%' }}></div>
         
         <div style={{ position: 'relative', display: 'inline-block', width: '100%', zIndex: 2 }}>
-          <h1 style={{ fontSize: 'min(18vw, 280px)', lineHeight: '0.85', margin: 0, letterSpacing: '-0.04em' }}>Johan</h1>
+          <h1 style={{ fontSize: 'min(18vw, 280px)', lineHeight: '0.85', margin: 0, letterSpacing: '-0.04em' }}>Arnav</h1>
           <h1 className="serif-italic" style={{ fontSize: 'min(18vw, 280px)', lineHeight: '0.85', margin: 0, transform: 'translateX(8vw)', letterSpacing: '-0.02em', color: '#111' }}>
-            Khalwani.
+            Shirwadkar.
           </h1>
           
           {/* Avatar & Bubble */}
           <div style={{ position: 'absolute', top: '15%', left: '48%', zIndex: 3, display: 'flex', alignItems: 'center' }}>
             <div style={{ width: '140px', height: '140px', borderRadius: '50%', overflow: 'hidden', border: '6px solid #f7f7f7', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}>
-              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80" alt="Johan" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80" alt="Arnav" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div style={{ background: '#fff', padding: '16px 24px', borderRadius: '40px', marginLeft: '-24px', zIndex: -1, boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.95rem', fontWeight: 600 }}>
               <Volume2 size={18} /> Let's solve problems and create new ones
@@ -62,7 +62,7 @@ export default function App() {
         </div>
 
         {/* Bio & Socials */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: '120px', flexWrap: 'wrap', gap: '40px', position: 'relative', zIndex: 2 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: '60px', flexWrap: 'wrap', gap: '40px', position: 'relative', zIndex: 2 }}>
           <div style={{ display: 'flex', gap: '16px' }}>
             <button className="icon-btn"><FaInstagram size={18} /></button>
             <button className="icon-btn"><FaFacebookF size={18} /></button>
@@ -72,7 +72,7 @@ export default function App() {
           </div>
           <div style={{ maxWidth: '600px' }}>
             <p style={{ fontSize: '1.25rem', lineHeight: '1.6', color: 'var(--text-secondary)', marginBottom: '40px', fontWeight: 400 }}>
-              Hello, I'm Johan Khalwani, an experienced Senior UI/UX Designer with 4+ years of industry experience. I have successfully overseen numerous design projects spanning various sectors. I'm eager to collaborate with you!
+              Hello, I'm Arnav Shirwadkar, an experienced UI/UX Designer and Frontend Developer. I have successfully overseen numerous digital projects spanning various sectors. I'm eager to collaborate with you!
             </p>
             <button className="pill-btn">Contact me</button>
           </div>
