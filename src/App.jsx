@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowUpRight, Volume2 } from 'lucide-react';
 import { FaInstagram, FaFacebookF, FaLinkedinIn, FaTwitter, FaDribbble, FaGithub } from 'react-icons/fa';
 import './index.css';
+import profilePic from './profilepic.png';
 
 export default function App() {
   const [time, setTime] = useState('');
@@ -24,7 +25,7 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{ maxWidth: '1800px', margin: '0 auto', padding: '0 5vw', position: 'relative' }}>
+    <div style={{ maxWidth: '1800px', margin: '0 auto', padding: '0 5vw', position: 'relative', overflow: 'hidden', boxSizing: 'border-box' }}>
       
       {/* Navbar */}
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 0', borderBottom: '1px solid rgba(0,0,0,0.05)', flexWrap: 'wrap', gap: '20px' }}>
@@ -42,7 +43,7 @@ export default function App() {
 
       {/* Hero */}
       <section style={{ paddingTop: '6vh', paddingBottom: '30px', position: 'relative' }}>
-        <div className="blob" style={{ width: '800px', height: '800px', top: '-10%', right: '-5%' }}></div>
+        <div className="blob" style={{ width: '800px', height: '800px', top: '-10%', right: '0', opacity: 0.4 }}></div>
         
         <div style={{ position: 'relative', display: 'inline-block', width: '100%', zIndex: 2 }}>
           <h1 style={{ fontSize: '14vw', lineHeight: '0.85', margin: 0, letterSpacing: '-0.04em' }}>Arnav</h1>
@@ -53,7 +54,7 @@ export default function App() {
           {/* Avatar & Bubble */}
           <div style={{ position: 'absolute', top: '15%', left: '55%', zIndex: 3, display: 'flex', alignItems: 'center' }}>
             <div style={{ width: '14vw', height: '14vw', maxWidth: '180px', maxHeight: '180px', minWidth: '100px', minHeight: '100px', borderRadius: '50%', overflow: 'hidden', border: '6px solid #f7f7f7', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}>
-              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80" alt="Arnav" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={profilePic} alt="Arnav" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.2)' }} />
             </div>
             <div style={{ background: '#fff', padding: '16px 24px', borderRadius: '40px', marginLeft: '-24px', zIndex: -1, boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.95rem', fontWeight: 600 }}>
               <Volume2 size={18} /> Let's solve problems and create new ones
@@ -73,7 +74,7 @@ export default function App() {
             <button className="pill-btn" style={{ alignSelf: 'flex-start' }}>Contact Me</button>
           </div>
           
-          <div style={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div style={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', gap: '20px', justifySelf: 'end', textAlign: 'right' }}>
             <p style={{ fontSize: '1.25rem', lineHeight: '1.6', margin: 0, color: 'var(--text-secondary)', fontWeight: 400 }}>
               Hello, I'm Arnav Shirwadkar, an experienced UI/UX Designer and Frontend Developer. I have successfully overseen numerous digital projects spanning various sectors. I'm eager to collaborate with you!
             </p>
@@ -247,28 +248,60 @@ export default function App() {
       </section>
 
       {/* Experience Section */}
-      <section style={{ paddingTop: '80px' }}>
-        <h2 className="section-title">Experience</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+      <section style={{ paddingTop: '80px', paddingBottom: '60px' }}>
+        <h2 className="section-title" style={{ marginBottom: '50px', fontSize: '2.8rem' }}>Experience</h2>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          borderLeft: '2px solid rgba(0,0,0,0.08)', 
+          paddingLeft: '50px', 
+          paddingRight: '50px', // Added symmetry on the right
+          marginLeft: '10px' 
+        }}>
           
           {/* Exp 1 */}
-          <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: '40px', borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '50px', paddingBottom: '50px' }}>
-            <div style={{ fontFamily: '"Courier New", monospace', padding: '10px 20px', background: 'rgba(0,0,0,0.05)', borderRadius: '4px', display: 'inline-block', justifySelf: 'start', height: 'fit-content', fontSize: '0.9rem', fontWeight: 600 }}>
-              2023 - Current
+          <div style={{ position: 'relative', paddingBottom: '50px' }}>
+            <div style={{ position: 'absolute', left: '-57px', top: '8px', width: '13px', height: '13px', borderRadius: '50%', background: '#111', border: '3px solid #f7f7f7', boxShadow: '0 0 0 1px rgba(0,0,0,0.1)' }}></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px', flexWrap: 'nowrap', gap: '20px' }}>
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 700, margin: 0, letterSpacing: '-0.01em' }}>Security Researcher / Penetration Tester</h3>
+              <span style={{ fontFamily: '"Courier New", monospace', fontSize: '0.85rem', fontWeight: 600, color: '#666', whiteSpace: 'nowrap' }}>2023 - Current</span>
             </div>
-            <div>
-              <h3 style={{ fontSize: '2rem', marginBottom: '10px', fontWeight: 700, letterSpacing: '-0.02em' }}>Security Researcher / Penetration Tester</h3>
-              <h4 style={{ fontSize: '1.2rem', color: 'var(--text-primary)', marginBottom: '20px', fontWeight: 500 }}>Company Name</h4>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: '1.7', maxWidth: '650px', fontSize: '1.15rem' }}>
-                Conducted comprehensive vulnerability assessments and penetration testing on web applications and internal networks. Discovered and remediated critical security flaws.
-              </p>
+            <div style={{ fontSize: '1.05rem', color: '#111', marginBottom: '16px', fontWeight: 600 }}>Company Name</div>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '1rem', margin: 0, width: '100%', display: 'block' }}>
+              Conducted comprehensive vulnerability assessments and penetration testing on web applications and internal networks. Discovered and remediated critical security flaws, implemented advanced security protocols, and mentored junior staff on offensive security techniques.
+            </p>
+          </div>
+
+          {/* Exp 2 */}
+          <div style={{ position: 'relative', paddingBottom: '50px' }}>
+            <div style={{ position: 'absolute', left: '-57px', top: '8px', width: '13px', height: '13px', borderRadius: '50%', background: '#888', border: '3px solid #f7f7f7', boxShadow: '0 0 0 1px rgba(0,0,0,0.1)' }}></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px', flexWrap: 'nowrap', gap: '20px' }}>
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 700, margin: 0, letterSpacing: '-0.01em' }}>Junior Security Analyst</h3>
+              <span style={{ fontFamily: '"Courier New", monospace', fontSize: '0.85rem', fontWeight: 600, color: '#666', whiteSpace: 'nowrap' }}>2022 - 2023</span>
             </div>
+            <div style={{ fontSize: '1.05rem', color: '#111', marginBottom: '16px', fontWeight: 600 }}>Previous Company</div>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '1rem', margin: 0, width: '100%', display: 'block' }}>
+              Assisted in SOC operations, monitored security alerts, and participated in incident response. Performed initial triage and documentation of security incidents while developing automated scripts for log analysis.
+            </p>
+          </div>
+
+          {/* Exp 3 */}
+          <div style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', left: '-57px', top: '8px', width: '13px', height: '13px', borderRadius: '50%', background: '#ccc', border: '3px solid #f7f7f7', boxShadow: '0 0 0 1px rgba(0,0,0,0.1)' }}></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px', flexWrap: 'nowrap', gap: '20px' }}>
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 700, margin: 0, letterSpacing: '-0.01em' }}>Cybersecurity Intern</h3>
+              <span style={{ fontFamily: '"Courier New", monospace', fontSize: '0.85rem', fontWeight: 600, color: '#666', whiteSpace: 'nowrap' }}>2021 - 2022</span>
+            </div>
+            <div style={{ fontSize: '1.05rem', color: '#111', marginBottom: '16px', fontWeight: 600 }}>Tech Solutions Inc.</div>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '1rem', margin: 0, width: '100%', display: 'block' }}>
+              Supported the security team in vulnerability scanning and patch management. Gained hands-on experience with network monitoring tools and security documentation standards.
+            </p>
           </div>
         </div>
       </section>
 
       {/* Education */}
-      <section style={{ paddingTop: '80px' }}>
+      <section style={{ paddingTop: '60px' }}>
         <h2 className="section-title">Education</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px' }}>
           <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '30px' }}>
@@ -342,7 +375,7 @@ export default function App() {
           
           {/* Footer Avatar */}
           <div style={{ position: 'absolute', top: '10%', right: '15%', width: 'min(20vw, 250px)', height: 'min(20vw, 250px)', borderRadius: '50%', overflow: 'hidden', border: '6px solid #222', zIndex: 1 }}>
-             <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=80" alt="Johan" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+             <img src={profilePic} alt="Arnav" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.2)' }} />
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '180px', fontSize: '0.85rem', color: '#888', textTransform: 'uppercase', fontWeight: 600 }}>
