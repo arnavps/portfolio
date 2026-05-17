@@ -320,14 +320,43 @@ export default function App() {
       {/* Certifications */}
       <section style={{ paddingTop: '80px' }}>
         <h2 className="section-title">Certifications</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '40px' }}>
-          <div className="cert-silhouette">
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '10px' }}>OSCP</h3>
-            <p style={{ color: '#aaa', fontFamily: '"Courier New", monospace' }}>Offensive Security Certified Professional</p>
+        <div className="projects-container">
+          {/* Cert 1 */}
+          <div className="project-wrapper">
+            <div className="project-header">
+              <div>
+                <h3 className="project-title">OSCP</h3>
+                <p className="project-tagline">Offensive Security Certified Professional</p>
+              </div>
+              <div className="project-number">01/02</div>
+            </div>
+            
+            <div className="project-silhouette">
+              <img src="https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=1200&q=80" alt="OSCP" />
+            </div>
+
+            <p className="project-overview">
+              Completed the rigorous 24-hour hands-on penetration testing exam, demonstrating advanced skills in offensive security and network exploitation.
+            </p>
           </div>
-          <div className="cert-silhouette">
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '10px' }}>Security+</h3>
-            <p style={{ color: '#aaa', fontFamily: '"Courier New", monospace' }}>CompTIA</p>
+
+          {/* Cert 2 */}
+          <div className="project-wrapper">
+            <div className="project-header">
+              <div>
+                <h3 className="project-title">Security+</h3>
+                <p className="project-tagline">CompTIA</p>
+              </div>
+              <div className="project-number">02/02</div>
+            </div>
+            
+            <div className="project-silhouette">
+              <img src="https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1200&q=80" alt="Security+" />
+            </div>
+
+            <p className="project-overview">
+              Validated foundational knowledge in cybersecurity principles, network security, risk management, and incident response.
+            </p>
           </div>
         </div>
       </section>
@@ -335,18 +364,62 @@ export default function App() {
       {/* Achievements */}
       <section style={{ paddingTop: '80px' }}>
         <h2 className="section-title">Achievements</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
-          <div style={{ background: '#111', color: '#fff', padding: '30px', borderRadius: '12px' }}>
-            <h3 style={{ fontSize: '2.5rem', marginBottom: '10px', fontFamily: '"Courier New", monospace' }}>Top 1%</h3>
-            <p style={{ fontSize: '1.2rem', color: '#aaa' }}>TryHackMe Global Ranking</p>
+        <div className="projects-container">
+          {/* Achievement 1 */}
+          <div className="project-wrapper">
+            <div className="project-header">
+              <div>
+                <h3 className="project-title">Top 1%</h3>
+                <p className="project-tagline">TryHackMe Global Ranking</p>
+              </div>
+              <div className="project-number">01/03</div>
+            </div>
+            
+            <div className="project-silhouette">
+              <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80" alt="TryHackMe" />
+            </div>
+
+            <p className="project-overview">
+              Ranked in the top 1% of users globally on TryHackMe, solving complex challenges in ethical hacking, network security, and digital forensics.
+            </p>
           </div>
-          <div style={{ background: '#111', color: '#fff', padding: '30px', borderRadius: '12px' }}>
-            <h3 style={{ fontSize: '2.5rem', marginBottom: '10px', fontFamily: '"Courier New", monospace' }}>5+</h3>
-            <p style={{ fontSize: '1.2rem', color: '#aaa' }}>Valid Bug Bounty Reports</p>
+
+          {/* Achievement 2 */}
+          <div className="project-wrapper">
+            <div className="project-header">
+              <div>
+                <h3 className="project-title">5+</h3>
+                <p className="project-tagline">Valid Bug Bounty Reports</p>
+              </div>
+              <div className="project-number">02/03</div>
+            </div>
+            
+            <div className="project-silhouette">
+              <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" alt="Bug Bounty" />
+            </div>
+
+            <p className="project-overview">
+              Successfully identified and reported valid vulnerabilities in public programs, helping companies secure their infrastructure.
+            </p>
           </div>
-          <div style={{ background: '#111', color: '#fff', padding: '30px', borderRadius: '12px' }}>
-            <h3 style={{ fontSize: '2.5rem', marginBottom: '10px', fontFamily: '"Courier New", monospace' }}>1st Place</h3>
-            <p style={{ fontSize: '1.2rem', color: '#aaa' }}>University CTF Competition</p>
+
+          {/* Achievement 3 */}
+          <div className="project-wrapper">
+            <div className="project-header">
+              <div>
+                <h3 className="project-title">1st Place</h3>
+                <p className="project-tagline">University CTF Competition</p>
+              </div>
+              <div className="project-number">03/03</div>
+            </div>
+            
+            <div className="project-silhouette">
+              <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1200&q=80" alt="CTF" />
+            </div>
+
+            <p className="project-overview">
+              Led the team to victory in the university-wide Capture The Flag competition, solving challenges in reverse engineering and cryptography.
+            </p>
           </div>
         </div>
       </section>
