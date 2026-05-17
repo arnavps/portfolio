@@ -330,8 +330,8 @@ export default function App() {
               </div>
               <div className="project-number">01/02</div>
             </div>
-            
-            <div className="project-silhouette">
+
+            <div className="project-image-wrapper">
               <img src="https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=1200&q=80" alt="OSCP" />
             </div>
 
@@ -349,8 +349,8 @@ export default function App() {
               </div>
               <div className="project-number">02/02</div>
             </div>
-            
-            <div className="project-silhouette">
+
+            <div className="project-image-wrapper">
               <img src="https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1200&q=80" alt="Security+" />
             </div>
 
@@ -374,8 +374,8 @@ export default function App() {
               </div>
               <div className="project-number">01/03</div>
             </div>
-            
-            <div className="project-silhouette">
+
+            <div className="project-image-wrapper">
               <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80" alt="TryHackMe" />
             </div>
 
@@ -393,8 +393,8 @@ export default function App() {
               </div>
               <div className="project-number">02/03</div>
             </div>
-            
-            <div className="project-silhouette">
+
+            <div className="project-image-wrapper">
               <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" alt="Bug Bounty" />
             </div>
 
@@ -412,8 +412,8 @@ export default function App() {
               </div>
               <div className="project-number">03/03</div>
             </div>
-            
-            <div className="project-silhouette">
+
+            <div className="project-image-wrapper">
               <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1200&q=80" alt="CTF" />
             </div>
 
