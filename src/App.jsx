@@ -1,22 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUpRight, Volume2 } from 'lucide-react';
-import { FaInstagram, FaFacebookF, FaLinkedinIn, FaTwitter, FaDribbble, FaGithub } from 'react-icons/fa';
+import { 
+  ArrowUpRight, 
+  Shield, 
+  Cpu, 
+  Terminal, 
+  Network, 
+  Award, 
+  BookOpen, 
+  Clock, 
+  Activity, 
+  Send, 
+  Globe, 
+  AlertTriangle,
+  Lock,
+  Layers,
+  ChevronRight,
+  Database,
+  ExternalLink
+} from 'lucide-react';
+import { FaLinkedinIn, FaGithub, FaTwitter, FaInstagram } from 'react-icons/fa';
 import './index.css';
 import profilePic from './profilepic.png';
 
 export default function App() {
   const [time, setTime] = useState('');
+  const [activeSection, setActiveSection] = useState('HOME');
+  const [selectedInterests, setSelectedInterests] = useState([]);
+  const [contactSuccess, setContactSuccess] = useState(false);
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      // Format time as shown in design: e.g. 09:41 AM GMT+7
-      const timeStr = now.toLocaleTimeString('en-US', { 
-        timeZone: 'Asia/Jakarta', 
-        hour12: true, 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      }) + ' GMT+7';
+      // Format as high-end military/telemetry log time: e.g. 18:40:02 GMT+7
+      const options = {
+        timeZone: 'Asia/Jakarta',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      };
+      const timeStr = now.toLocaleTimeString('en-US', options) + ' GMT+7';
       setTime(timeStr);
     };
     updateTime();
@@ -24,440 +47,1396 @@ export default function App() {
     return () => clearInterval(int);
   }, []);
 
+  const handleInterestToggle = (interest) => {
+    if (selectedInterests.includes(interest)) {
+      setSelectedInterests(selectedInterests.filter(i => i !== interest));
+    } else {
+      setSelectedInterests([...selectedInterests, interest]);
+    }
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setContactSuccess(true);
+    setTimeout(() => setContactSuccess(false), 5000);
+  };
+
   return (
-    <div style={{ maxWidth: '1800px', margin: '0 auto', padding: '0 5vw', position: 'relative', overflow: 'hidden', boxSizing: 'border-box' }}>
+    <div style={{ 
+      backgroundColor: 'var(--bg-main)', 
+      color: 'var(--text-primary)', 
+      position: 'relative', 
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
       
-      {/* Navbar */}
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 0', borderBottom: '1px solid rgba(0,0,0,0.05)', flexWrap: 'wrap', gap: '20px' }}>
-        <nav style={{ display: 'flex', gap: '40px' }}>
-          <a href="#" className="nav-link">Home</a>
-          <a href="#works" className="nav-link">Works</a>
-          <a href="#bookmarks" className="nav-link">Bookmarks</a>
-          <a href="#design-gallery" className="nav-link">Design Gallery</a>
-        </nav>
-        <div style={{ display: 'flex', gap: '40px', fontSize: '0.85rem', fontWeight: 600, textTransform: 'uppercase' }}>
-          <div>Purwokerto, Indonesia</div>
-          <div>{time}</div>
+      {/* Sticky frosted glass header / console */}
+      <header style={{ 
+        position: 'sticky', 
+        top: 0, 
+        zIndex: 100, 
+        backdropFilter: 'blur(12px)', 
+        WebkitBackdropFilter: 'blur(12px)', 
+        borderBottom: '1px solid var(--border)',
+        backgroundColor: 'rgba(8, 8, 12, 0.75)',
+        width: '100%'
+      }}>
+        <div style={{ 
+          maxWidth: '1440px', 
+          margin: '0 auto', 
+          padding: '16px 24px', 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          flexWrap: 'wrap', 
+          gap: '15px' 
+        }}>
+          {/* Operator ID Node */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ 
+              width: '8px', 
+              height: '8px', 
+              borderRadius: '50%', 
+              backgroundColor: 'var(--accent)', 
+              boxShadow: '0 0 10px var(--accent-glow)' 
+            }} />
+            <span style={{ 
+              fontFamily: 'var(--font-mono)', 
+              fontSize: '0.85rem', 
+              letterSpacing: '0.1em', 
+              fontWeight: 700 
+            }}>
+              ARNAV.SHIRVADKAR // SEC_OPS
+            </span>
+          </div>
+
+          {/* Monospace Sticky Nav */}
+          <nav style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+            <a href="#" className="nav-link" onClick={() => setActiveSection('HOME')}>ABOUT</a>
+            <a href="#capabilities" className="nav-link" onClick={() => setActiveSection('CAPABILITIES')}>CAPABILITIES</a>
+            <a href="#operations" className="nav-link" onClick={() => setActiveSection('OPERATIONS')}>OPERATIONS</a>
+            <a href="#history" className="nav-link" onClick={() => setActiveSection('HISTORY')}>HISTORY</a>
+            <a href="#credentials" className="nav-link" onClick={() => setActiveSection('CREDENTIALS')}>CREDENTIALS</a>
+            <a href="#terminal" className="nav-link" onClick={() => setActiveSection('TERMINAL')}>TERMINAL</a>
+          </nav>
+
+          {/* Live Telemetry Status Widget */}
+          <div style={{ 
+            display: 'flex', 
+            gap: '24px', 
+            fontFamily: 'var(--font-mono)', 
+            fontSize: '0.72rem', 
+            color: 'var(--text-secondary)',
+            textTransform: 'uppercase'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Globe size={12} color="var(--accent)" />
+              <span>PURWOKERTO, ID</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Clock size={12} color="var(--accent)" />
+              <span>{time}</span>
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <section style={{ paddingTop: '6vh', paddingBottom: '30px', position: 'relative' }}>
-        <div className="blob" style={{ width: '800px', height: '800px', top: '-10%', right: '0', opacity: 0.4 }}></div>
+      {/* Main Container */}
+      <main style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 24px', width: '100%', flex: 1 }}>
         
-        <div style={{ position: 'relative', display: 'inline-block', width: '100%', zIndex: 2 }}>
-          <h1 style={{ fontSize: '14vw', lineHeight: '0.85', margin: 0, letterSpacing: '-0.04em' }}>Arnav</h1>
-          <h1 className="serif-italic" style={{ fontSize: '14vw', lineHeight: '0.85', margin: 0, transform: 'translateX(5vw)', letterSpacing: '-0.02em', color: '#111' }}>
-            Shirwadkar.
-          </h1>
-          
-          {/* Avatar & Bubble */}
-          <div style={{ position: 'absolute', top: '15%', left: '55%', zIndex: 3, display: 'flex', alignItems: 'center' }}>
-            <div style={{ width: '14vw', height: '14vw', maxWidth: '180px', maxHeight: '180px', minWidth: '100px', minHeight: '100px', borderRadius: '50%', overflow: 'hidden', border: '6px solid #f7f7f7', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}>
-              <img src={profilePic} alt="Arnav" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.2)' }} />
-            </div>
-            <div style={{ background: '#fff', padding: '16px 24px', borderRadius: '40px', marginLeft: '-24px', zIndex: -1, boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.95rem', fontWeight: 600 }}>
-              <Volume2 size={18} /> Let's solve problems and create new ones
-            </div>
-          </div>
-        </div>
-
-        {/* Bio & Socials */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '10vw', marginTop: '4vw', position: 'relative', zIndex: 2 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ display: 'flex', gap: '16px' }}>
-              <button className="icon-btn"><FaInstagram size={18} /></button>
-              <button className="icon-btn"><FaFacebookF size={18} /></button>
-              <button className="icon-btn"><FaTwitter size={18} /></button>
-              <button className="icon-btn"><FaGithub size={18} /></button>
-            </div>
-            <button className="pill-btn" style={{ alignSelf: 'flex-start' }}>Contact Me</button>
-          </div>
-          
-          <div style={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', gap: '20px', justifySelf: 'end', textAlign: 'right' }}>
-            <p style={{ fontSize: '1.25rem', lineHeight: '1.6', margin: 0, color: 'var(--text-secondary)', fontWeight: 400 }}>
-              Hello, I'm Arnav Shirwadkar, an experienced UI/UX Designer and Frontend Developer. I have successfully overseen numerous digital projects spanning various sectors. I'm eager to collaborate with you!
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Skills Section */}
-      <section id="skills" style={{ paddingTop: '80px' }}>
-        <h2 className="section-title">Skills & Arsenal</h2>
-        <div className="skills-grid">
-          <div className="skill-card">
-            <h3 className="skill-category">Offensive Security</h3>
-            <ul className="skill-list">
-              <li className="skill-item">Web Application Testing</li>
-              <li className="skill-item">Reconnaissance</li>
-              <li className="skill-item">Vulnerability Assessment</li>
-              <li className="skill-item">OWASP Top 10</li>
-              <li className="skill-item">Enumeration</li>
-              <li className="skill-item">Basic Exploit Development</li>
-            </ul>
-          </div>
-          <div className="skill-card">
-            <h3 className="skill-category">Networking</h3>
-            <ul className="skill-list">
-              <li className="skill-item">TCP/IP</li>
-              <li className="skill-item">DNS</li>
-              <li className="skill-item">HTTP/HTTPS</li>
-              <li className="skill-item">Routing & Switching</li>
-              <li className="skill-item">Subnetting</li>
-            </ul>
-          </div>
-          <div className="skill-card">
-            <h3 className="skill-category">Tools</h3>
-            <ul className="skill-list">
-              <li className="skill-item">Burp Suite</li>
-              <li className="skill-item">Nmap</li>
-              <li className="skill-item">Wireshark</li>
-              <li className="skill-item">Metasploit</li>
-              <li className="skill-item">ffuf / gobuster</li>
-              <li className="skill-item">sqlmap / nuclei</li>
-            </ul>
-          </div>
-          <div className="skill-card">
-            <h3 className="skill-category">Programming & Platforms</h3>
-            <ul className="skill-list">
-              <li className="skill-item">Python / Bash</li>
-              <li className="skill-item">JavaScript / HTML/CSS</li>
-              <li className="skill-item">Linux</li>
-              <li className="skill-item">Git / Docker</li>
-              <li className="skill-item">TryHackMe / Hack The Box</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* Projects Section */}
-      <section id="projects" style={{ paddingTop: '80px' }}>
-        <h2 className="section-title">Operations & Projects</h2>
-        
-        <div className="projects-container">
-          {/* Project 1 */}
-          <div className="project-wrapper">
-            <div className="project-header">
-              <div>
-                <h3 className="project-title">Project Alpha</h3>
-                <p className="project-tagline">Advanced Network Intrusion Detection</p>
-              </div>
-              <div className="project-number">01/04</div>
-            </div>
-            
-            <div className="tech-stack">
-              <span>Python</span> <span className="tech-separator">|</span>
-              <span>Scapy</span> <span className="tech-separator">|</span>
-              <span>ELK Stack</span> <span className="tech-separator">|</span>
-              <span>Suricata</span> <span className="tech-separator">|</span>
-              <span>Network Defense</span> <span className="tech-separator">|</span>
-              <span>Linux</span>
-            </div>
-
-            <div className="project-silhouette">
-              <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" alt="Project 1" />
-            </div>
-
-            <p className="project-overview">
-              An AI-driven intrusion detection system designed to identify and mitigate real-time network threats. It utilizes deep packet inspection and behavioral analysis to defend against zero-day exploits and sophisticated lateral movement.
-            </p>
-          </div>
-
-          {/* Project 2 */}
-          <div className="project-wrapper">
-            <div className="project-header">
-              <div>
-                <h3 className="project-title">Project Beta</h3>
-                <p className="project-tagline">Automated Penetration Testing Framework</p>
-              </div>
-              <div className="project-number">02/04</div>
-            </div>
-            
-            <div className="tech-stack">
-              <span>Go</span> <span className="tech-separator">|</span>
-              <span>Docker</span> <span className="tech-separator">|</span>
-              <span>Metasploit API</span> <span className="tech-separator">|</span>
-              <span>Vulnerability Scanning</span> <span className="tech-separator">|</span>
-              <span>Offensive Security</span>
-            </div>
-
-            <div className="project-silhouette">
-              <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1200&q=80" alt="Project 2" />
-            </div>
-
-            <p className="project-overview">
-              A modular framework that orchestrates complex attack chains to validate security controls. By simulating realistic adversary behavior, it provides actionable insights into defensive gaps and misconfigurations across hybrid environments.
-            </p>
-          </div>
-
-          {/* Project 3 */}
-          <div className="project-wrapper">
-            <div className="project-header">
-              <div>
-                <h3 className="project-title">Project Gamma</h3>
-                <p className="project-tagline">Cloud Security Posture Management</p>
-              </div>
-              <div className="project-number">03/04</div>
-            </div>
-            
-            <div className="tech-stack">
-              <span>Terraform</span> <span className="tech-separator">|</span>
-              <span>AWS</span> <span className="tech-separator">|</span>
-              <span>Cloud Custodian</span> <span className="tech-separator">|</span>
-              <span>IAM Analysis</span> <span className="tech-separator">|</span>
-              <span>Infrastructure as Code</span>
-            </div>
-
-            <div className="project-silhouette">
-              <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80" alt="Project 3" />
-            </div>
-
-            <p className="project-overview">
-              A comprehensive toolset for auditing and securing multi-cloud infrastructures. It automatically identifies overly permissive IAM policies, unencrypted storage, and exposed services, ensuring compliance with industry standards and best practices.
-            </p>
-          </div>
-
-          {/* Project 4 */}
-          <div className="project-wrapper">
-            <div className="project-header">
-              <div>
-                <h3 className="project-title">Project Delta</h3>
-                <p className="project-tagline">Zero Trust Architecture Implementation</p>
-              </div>
-              <div className="project-number">04/04</div>
-            </div>
-            
-            <div className="tech-stack">
-              <span>Kubernetes</span> <span className="tech-separator">|</span>
-              <span>Istio</span> <span className="tech-separator">|</span>
-              <span>OAuth2</span> <span className="tech-separator">|</span>
-              <span>OPA</span> <span className="tech-separator">|</span>
-              <span>Network Segmentation</span>
-            </div>
-
-            <div className="project-silhouette">
-              <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80" alt="Project 4" />
-            </div>
-
-            <p className="project-overview">
-              A reference implementation of a Zero Trust network for microservices. It enforces granular access control, mutual TLS, and continuous verification, significantly reducing the attack surface in cloud-native environments.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Experience Section */}
-      <section style={{ paddingTop: '80px', paddingBottom: '60px' }}>
-        <h2 className="section-title" style={{ marginBottom: '50px', fontSize: '2.8rem' }}>Experience</h2>
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          borderLeft: '2px solid rgba(0,0,0,0.08)', 
-          paddingLeft: '50px', 
-          paddingRight: '50px', // Added symmetry on the right
-          marginLeft: '10px' 
+        {/* Layered Tactical Hero */}
+        <section style={{ 
+          paddingTop: '8vh', 
+          paddingBottom: '8vh', 
+          position: 'relative', 
+          borderBottom: '1px solid var(--border)'
         }}>
+          {/* Scanline Effect */}
+          <div className="scanning-line" />
           
-          {/* Exp 1 */}
-          <div style={{ position: 'relative', paddingBottom: '50px' }}>
-            <div style={{ position: 'absolute', left: '-57px', top: '8px', width: '13px', height: '13px', borderRadius: '50%', background: '#111', border: '3px solid #f7f7f7', boxShadow: '0 0 0 1px rgba(0,0,0,0.1)' }}></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px', flexWrap: 'nowrap', gap: '20px' }}>
-              <h3 style={{ fontSize: '1.35rem', fontWeight: 700, margin: 0, letterSpacing: '-0.01em' }}>Security Researcher / Penetration Tester</h3>
-              <span style={{ fontFamily: '"Courier New", monospace', fontSize: '0.85rem', fontWeight: 600, color: '#666', whiteSpace: 'nowrap' }}>2023 - Current</span>
+          {/* Electric Spotlight */}
+          <div className="blob" style={{ top: '-10%', right: '20%' }}></div>
+          
+          <div style={{ position: 'relative', zIndex: 2 }}>
+            {/* Top Operational Heading */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '12px', 
+              marginBottom: '24px', 
+              fontFamily: 'var(--font-mono)' 
+            }}>
+              <span style={{ 
+                color: 'var(--accent)', 
+                background: 'var(--accent-dim)', 
+                padding: '2px 8px', 
+                borderRadius: '3px',
+                fontSize: '0.72rem',
+                fontWeight: 600,
+                letterSpacing: '0.1em'
+              }}>
+                [ STATUS: ACTIVE ]
+              </span>
+              <span className="telemetry-text">
+                OFFENSIVE SECURITY ENGINEER • APPLICATION RECON • RED TEAMING
+              </span>
             </div>
-            <div style={{ fontSize: '1.05rem', color: '#111', marginBottom: '16px', fontWeight: 600 }}>Company Name</div>
-            <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '1rem', margin: 0, width: '100%', display: 'block' }}>
-              Conducted comprehensive vulnerability assessments and penetration testing on web applications and internal networks. Discovered and remediated critical security flaws, implemented advanced security protocols, and mentored junior staff on offensive security techniques.
-            </p>
-          </div>
 
-          {/* Exp 2 */}
-          <div style={{ position: 'relative', paddingBottom: '50px' }}>
-            <div style={{ position: 'absolute', left: '-57px', top: '8px', width: '13px', height: '13px', borderRadius: '50%', background: '#888', border: '3px solid #f7f7f7', boxShadow: '0 0 0 1px rgba(0,0,0,0.1)' }}></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px', flexWrap: 'nowrap', gap: '20px' }}>
-              <h3 style={{ fontSize: '1.35rem', fontWeight: 700, margin: 0, letterSpacing: '-0.01em' }}>Junior Security Analyst</h3>
-              <span style={{ fontFamily: '"Courier New", monospace', fontSize: '0.85rem', fontWeight: 600, color: '#666', whiteSpace: 'nowrap' }}>2022 - 2023</span>
+            {/* Large Clean Nameplate */}
+            <div style={{ margin: '0 0 32px 0' }}>
+              <h1 style={{ 
+                fontSize: 'clamp(3rem, 8vw, 6.5rem)', 
+                lineHeight: '0.9', 
+                fontWeight: 800, 
+                letterSpacing: '-0.04em',
+                color: 'var(--text-primary)'
+              }}>
+                ARNAV
+              </h1>
+              <h1 style={{ 
+                fontSize: 'clamp(3rem, 8vw, 6.5rem)', 
+                lineHeight: '0.9', 
+                fontWeight: 800, 
+                letterSpacing: '-0.03em',
+                color: 'transparent',
+                WebkitTextStroke: '1px var(--text-primary)'
+              }}>
+                SHIRVADKAR.
+              </h1>
             </div>
-            <div style={{ fontSize: '1.05rem', color: '#111', marginBottom: '16px', fontWeight: 600 }}>Previous Company</div>
-            <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '1rem', margin: 0, width: '100%', display: 'block' }}>
-              Assisted in SOC operations, monitored security alerts, and participated in incident response. Performed initial triage and documentation of security incidents while developing automated scripts for log analysis.
-            </p>
-          </div>
 
-          {/* Exp 3 */}
-          <div style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '-57px', top: '8px', width: '13px', height: '13px', borderRadius: '50%', background: '#ccc', border: '3px solid #f7f7f7', boxShadow: '0 0 0 1px rgba(0,0,0,0.1)' }}></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px', flexWrap: 'nowrap', gap: '20px' }}>
-              <h3 style={{ fontSize: '1.35rem', fontWeight: 700, margin: 0, letterSpacing: '-0.01em' }}>Cybersecurity Intern</h3>
-              <span style={{ fontFamily: '"Courier New", monospace', fontSize: '0.85rem', fontWeight: 600, color: '#666', whiteSpace: 'nowrap' }}>2021 - 2022</span>
-            </div>
-            <div style={{ fontSize: '1.05rem', color: '#111', marginBottom: '16px', fontWeight: 600 }}>Tech Solutions Inc.</div>
-            <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '1rem', margin: 0, width: '100%', display: 'block' }}>
-              Supported the security team in vulnerability scanning and patch management. Gained hands-on experience with network monitoring tools and security documentation standards.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Education */}
-      <section style={{ paddingTop: '60px' }}>
-        <h2 className="section-title">Education</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px' }}>
-          <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '30px' }}>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px' }}>B.Tech</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '8px' }}>University Name Placeholder</p>
-            <p style={{ fontFamily: '"Courier New", monospace', fontSize: '0.9rem', color: '#888' }}>2021 - 2025</p>
-          </div>
-          <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '30px' }}>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px' }}>HSC</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '8px' }}>High School Name Placeholder</p>
-            <p style={{ fontFamily: '"Courier New", monospace', fontSize: '0.9rem', color: '#888' }}>2019 - 2021</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Certifications */}
-      <section style={{ paddingTop: '80px' }}>
-        <h2 className="section-title">Certifications</h2>
-        <div className="projects-container">
-          {/* Cert 1 */}
-          <div className="project-wrapper">
-            <div className="project-header">
-              <div>
-                <h3 className="project-title">OSCP</h3>
-                <p className="project-tagline">Offensive Security Certified Professional</p>
+            {/* Tactical Columns */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+              gap: '40px',
+              marginTop: '40px'
+            }}>
+              {/* Operator Social Nodes */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button className="icon-btn" onClick={() => window.open('https://github.com', '_blank')}><FaGithub size={18} /></button>
+                  <button className="icon-btn" onClick={() => window.open('https://linkedin.com', '_blank')}><FaLinkedinIn size={18} /></button>
+                  <button className="icon-btn" onClick={() => window.open('https://twitter.com', '_blank')}><FaTwitter size={18} /></button>
+                  <button className="icon-btn" onClick={() => window.open('https://instagram.com', '_blank')}><FaInstagram size={18} /></button>
+                </div>
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                  <a href="#terminal" className="pill-btn">INITIATE DEPLOYMENT</a>
+                  <span style={{ 
+                    fontFamily: 'var(--font-mono)', 
+                    fontSize: '0.7rem', 
+                    color: 'var(--text-muted)' 
+                  }}>
+                    SYS_V: 1.0.4 // LOCAL
+                  </span>
+                </div>
               </div>
-              <div className="project-number">01/02</div>
-            </div>
 
-            <div className="project-image-wrapper">
-              <img src="https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=1200&q=80" alt="OSCP" />
-            </div>
-
-            <p className="project-overview">
-              Completed the rigorous 24-hour hands-on penetration testing exam, demonstrating advanced skills in offensive security and network exploitation.
-            </p>
-          </div>
-
-          {/* Cert 2 */}
-          <div className="project-wrapper">
-            <div className="project-header">
-              <div>
-                <h3 className="project-title">Security+</h3>
-                <p className="project-tagline">CompTIA</p>
+              {/* Tactical Bio Intro */}
+              <div style={{ 
+                borderLeft: '2px solid var(--accent)', 
+                paddingLeft: '24px', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                justifyContent: 'center' 
+              }}>
+                <p style={{ 
+                  fontSize: '1.15rem', 
+                  lineHeight: '1.6', 
+                  color: 'var(--text-secondary)', 
+                  fontWeight: 400 
+                }}>
+                  "Investigating system architectures, constructing automated security tooling, and executing offensive security research focused on understanding exactly how modern enterprise boundaries and trust logic fail."
+                </p>
               </div>
-              <div className="project-number">02/02</div>
             </div>
 
-            <div className="project-image-wrapper">
-              <img src="https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1200&q=80" alt="Security+" />
-            </div>
-
-            <p className="project-overview">
-              Validated foundational knowledge in cybersecurity principles, network security, risk management, and incident response.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Achievements */}
-      <section style={{ paddingTop: '80px' }}>
-        <h2 className="section-title">Achievements</h2>
-        <div className="projects-container">
-          {/* Achievement 1 */}
-          <div className="project-wrapper">
-            <div className="project-header">
+            {/* Technical Metadata Bar Strip */}
+            <div style={{ 
+              marginTop: '80px', 
+              border: '1px solid var(--border)', 
+              borderRadius: '4px',
+              background: 'var(--bg-surface)',
+              padding: '20px 24px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '24px',
+              fontFamily: 'var(--font-mono)'
+            }}>
               <div>
-                <h3 className="project-title">Top 1%</h3>
-                <p className="project-tagline">TryHackMe Global Ranking</p>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>CORE_LOC</div>
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>INDIA // AP-SOUTH-1</div>
               </div>
-              <div className="project-number">01/03</div>
-            </div>
-
-            <div className="project-image-wrapper">
-              <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80" alt="TryHackMe" />
-            </div>
-
-            <p className="project-overview">
-              Ranked in the top 1% of users globally on TryHackMe, solving complex challenges in ethical hacking, network security, and digital forensics.
-            </p>
-          </div>
-
-          {/* Achievement 2 */}
-          <div className="project-wrapper">
-            <div className="project-header">
               <div>
-                <h3 className="project-title">5+</h3>
-                <p className="project-tagline">Valid Bug Bounty Reports</p>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>FOCUS_VECTOR</div>
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>WEB APP & CLOUD INT</div>
               </div>
-              <div className="project-number">02/03</div>
-            </div>
-
-            <div className="project-image-wrapper">
-              <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" alt="Bug Bounty" />
-            </div>
-
-            <p className="project-overview">
-              Successfully identified and reported valid vulnerabilities in public programs, helping companies secure their infrastructure.
-            </p>
-          </div>
-
-          {/* Achievement 3 */}
-          <div className="project-wrapper">
-            <div className="project-header">
               <div>
-                <h3 className="project-title">1st Place</h3>
-                <p className="project-tagline">University CTF Competition</p>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>CURRENT_STATUS</div>
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent)', animation: 'pulse 1.5s infinite' }} />
+                  RESEARCHING LABS
+                </div>
               </div>
-              <div className="project-number">03/03</div>
+              <div>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>CERT_TRACK</div>
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>CEH → PNPT → OSCP</div>
+              </div>
             </div>
-
-            <div className="project-image-wrapper">
-              <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1200&q=80" alt="CTF" />
-            </div>
-
-            <p className="project-overview">
-              Led the team to victory in the university-wide Capture The Flag competition, solving challenges in reverse engineering and cryptography.
-            </p>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Quote Section */}
-      <section className="quote-section">
-        <h2 className="quote-text">
-          "Thinking like an attacker is not about the tool you use; it’s about figuring out how things connect in ways the creator never imagined."
-        </h2>
-      </section>
-      
-      {/* Footer */}
+        {/* Capabilities Section */}
+        <section id="capabilities" style={{ paddingTop: '100px', paddingBottom: '100px', borderBottom: '1px solid var(--border)' }}>
+          <h2 className="section-title">Tactical Capabilities</h2>
+          <div className="skills-grid">
+            
+            {/* Panel 1 */}
+            <div className="skill-card">
+              <div className="skill-category">
+                <span>OFFENSIVE SECURITY</span>
+                <Shield size={16} color="var(--accent)" />
+              </div>
+              <ul className="skill-list">
+                <li className="skill-item">Web Application Testing</li>
+                <li className="skill-item">Reconnaissance & Intel</li>
+                <li className="skill-item">Vulnerability Assessment</li>
+                <li className="skill-item">OWASP Top 10 Auditing</li>
+                <li className="skill-item">System Enumeration</li>
+                <li className="skill-item">Exploit Delivery Logic</li>
+              </ul>
+            </div>
+
+            {/* Panel 2 */}
+            <div className="skill-card">
+              <div className="skill-category">
+                <span>NETWORKING LAYER</span>
+                <Network size={16} color="var(--accent)" />
+              </div>
+              <ul className="skill-list">
+                <li className="skill-item">TCP/IP Packet Profiling</li>
+                <li className="skill-item">DNS & Protocol Hijack vectors</li>
+                <li className="skill-item">HTTP/HTTPS Tunneling</li>
+                <li className="skill-item">Routing Analysis</li>
+                <li className="skill-item">Network Segmentation Audit</li>
+              </ul>
+            </div>
+
+            {/* Panel 3 */}
+            <div className="skill-card">
+              <div className="skill-category">
+                <span>OFFENSIVE TOOLKIT</span>
+                <Terminal size={16} color="var(--accent)" />
+              </div>
+              <ul className="skill-list">
+                <li className="skill-item">Burp Suite Professional</li>
+                <li className="skill-item">Nmap Network Scanner</li>
+                <li className="skill-item">Wireshark Packet Capture</li>
+                <li className="skill-item">Metasploit Exploitation</li>
+                <li className="skill-item">ffuf / Gobuster fuzzing</li>
+                <li className="skill-item">Sqlmap & Nuclei scanners</li>
+              </ul>
+            </div>
+
+            {/* Panel 4 */}
+            <div className="skill-card">
+              <div className="skill-category">
+                <span>ENGINEERING DEPS</span>
+                <Cpu size={16} color="var(--accent)" />
+              </div>
+              <ul className="skill-list">
+                <li className="skill-item">Python Scripting & Automation</li>
+                <li className="skill-item">Bash Command Pipeline</li>
+                <li className="skill-item">JavaScript / HTML / CSS</li>
+                <li className="skill-item">Docker Containment</li>
+                <li className="skill-item">Linux Enterprise Admin</li>
+              </ul>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Projects / Operations Section */}
+        <section id="operations" style={{ paddingTop: '100px', paddingBottom: '100px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '20px' }}>
+            <h2 className="section-title">ACTIVE OPERATIONS DOSSIERS</h2>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              LOADED: 4 ACTIVE MISSION PROFILES
+            </span>
+          </div>
+
+          <div className="projects-container" style={{ marginTop: '20px' }}>
+            {/* Op 1 */}
+            <div className="project-wrapper">
+              <div>
+                <div className="project-header">
+                  <h3 className="project-title" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                    OP_ALPHA // DETECT
+                  </h3>
+                  <span className="project-number">OP-01</span>
+                </div>
+                <p className="project-tagline" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--accent)' }}>
+                  [ CLASS: ADVANCED NETWORK INTRUSION DETECTION ]
+                </p>
+                
+                <div className="project-silhouette">
+                  <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" alt="Operation Alpha" />
+                  <div style={{ position: 'absolute', bottom: '10px', left: '10px', display: 'flex', gap: '6px' }}>
+                    <span style={{ background: 'rgba(0,0,0,0.8)', border: '1px solid var(--border)', borderRadius: '3px', padding: '2px 6px', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
+                      STATUS: VERIFIED
+                    </span>
+                  </div>
+                </div>
+
+                <p className="project-overview">
+                  An AI-driven threat parsing and alert system designed to identify and isolate active lateral network movements. Implements deep packet inspection logic combined with custom heuristics pipelines to preemptively flag threat profiles.
+                </p>
+              </div>
+
+              <div>
+                <div className="tech-stack">
+                  <span className="tech-tag">Python</span>
+                  <span className="tech-tag">Scapy</span>
+                  <span className="tech-tag">ELK Stack</span>
+                  <span className="tech-tag">Suricata</span>
+                  <span className="tech-tag">Linux API</span>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+                  <button className="pill-btn" style={{ flex: 1, justifyContent: 'center', padding: '8px' }}>
+                    [ VIEW CASE FILE ]
+                  </button>
+                  <button className="icon-btn" onClick={() => window.open('https://github.com', '_blank')}>
+                    <FaGithub size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Op 2 */}
+            <div className="project-wrapper">
+              <div>
+                <div className="project-header">
+                  <h3 className="project-title" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                    OP_BETA // AUTO_PENTEST
+                  </h3>
+                  <span className="project-number">OP-02</span>
+                </div>
+                <p className="project-tagline" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--accent)' }}>
+                  [ CLASS: AUTOMATED PENETRATION TESTING FRAMEWORK ]
+                </p>
+                
+                <div className="project-silhouette">
+                  <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1200&q=80" alt="Operation Beta" />
+                  <div style={{ position: 'absolute', bottom: '10px', left: '10px', display: 'flex', gap: '6px' }}>
+                    <span style={{ background: 'rgba(0,0,0,0.8)', border: '1px solid var(--border)', borderRadius: '3px', padding: '2px 6px', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
+                      STATUS: BUILDING
+                    </span>
+                  </div>
+                </div>
+
+                <p className="project-overview">
+                  A modular Golang orchestration framework simulating coordinated threat actor behavior. Implements automated discovery sweeps, scans target exploit surfaces, and exposes critical infrastructure vulnerabilities across simulated sandboxes.
+                </p>
+              </div>
+
+              <div>
+                <div className="tech-stack">
+                  <span className="tech-tag">Go</span>
+                  <span className="tech-tag">Docker</span>
+                  <span className="tech-tag">Metasploit API</span>
+                  <span className="tech-tag">Recon Vector</span>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+                  <button className="pill-btn" style={{ flex: 1, justifyContent: 'center', padding: '8px' }}>
+                    [ VIEW CASE FILE ]
+                  </button>
+                  <button className="icon-btn" onClick={() => window.open('https://github.com', '_blank')}>
+                    <FaGithub size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Op 3 */}
+            <div className="project-wrapper">
+              <div>
+                <div className="project-header">
+                  <h3 className="project-title" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                    OP_GAMMA // CLOUD_POSTURE
+                  </h3>
+                  <span className="project-number">OP-03</span>
+                </div>
+                <p className="project-tagline" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--accent)' }}>
+                  [ CLASS: CLOUD SECURITY POSTURE MANAGEMENT ]
+                </p>
+                
+                <div className="project-silhouette">
+                  <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80" alt="Operation Gamma" />
+                  <div style={{ position: 'absolute', bottom: '10px', left: '10px', display: 'flex', gap: '6px' }}>
+                    <span style={{ background: 'rgba(0,0,0,0.8)', border: '1px solid var(--border)', borderRadius: '3px', padding: '2px 6px', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
+                      STATUS: STANDBY
+                    </span>
+                  </div>
+                </div>
+
+                <p className="project-overview">
+                  Automated security posture and IAM configuration tracking across major multi-cloud targets. Implements active monitoring policies that flag exposed endpoints, unencrypted storage systems, and overly permissive trust loops.
+                </p>
+              </div>
+
+              <div>
+                <div className="tech-stack">
+                  <span className="tech-tag">Terraform</span>
+                  <span className="tech-tag">AWS Cloud</span>
+                  <span className="tech-tag">IAM Analyzer</span>
+                  <span className="tech-tag">Custodian</span>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+                  <button className="pill-btn" style={{ flex: 1, justifyContent: 'center', padding: '8px' }}>
+                    [ VIEW CASE FILE ]
+                  </button>
+                  <button className="icon-btn" onClick={() => window.open('https://github.com', '_blank')}>
+                    <FaGithub size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Op 4 */}
+            <div className="project-wrapper">
+              <div>
+                <div className="project-header">
+                  <h3 className="project-title" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                    OP_DELTA // ZERO_TRUST
+                  </h3>
+                  <span className="project-number">OP-04</span>
+                </div>
+                <p className="project-tagline" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--accent)' }}>
+                  [ CLASS: ZERO TRUST ARCHITECTURE ]
+                </p>
+                
+                <div className="project-silhouette">
+                  <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80" alt="Operation Delta" />
+                  <div style={{ position: 'absolute', bottom: '10px', left: '10px', display: 'flex', gap: '6px' }}>
+                    <span style={{ background: 'rgba(0,0,0,0.8)', border: '1px solid var(--border)', borderRadius: '3px', padding: '2px 6px', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
+                      STATUS: COMPLETED
+                    </span>
+                  </div>
+                </div>
+
+                <p className="project-overview">
+                  Reference microservices implementation locking internal networks down using mutual TLS, continuous request authorization policies, and strict API proxy gateway segmentations.
+                </p>
+              </div>
+
+              <div>
+                <div className="tech-stack">
+                  <span className="tech-tag">Kubernetes</span>
+                  <span className="tech-tag">Istio Service Mesh</span>
+                  <span className="tech-tag">OPA Core</span>
+                  <span className="tech-tag">OAuth2</span>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+                  <button className="pill-btn" style={{ flex: 1, justifyContent: 'center', padding: '8px' }}>
+                    [ VIEW CASE FILE ]
+                  </button>
+                  <button className="icon-btn" onClick={() => window.open('https://github.com', '_blank')}>
+                    <FaGithub size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Experience Section */}
+        <section id="history" style={{ paddingTop: '100px', paddingBottom: '100px', borderBottom: '1px solid var(--border)' }}>
+          <h2 className="section-title">OPERATIONAL TIMELINE HISTORY</h2>
+          
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            position: 'relative',
+            marginTop: '40px'
+          }}>
+            {/* Central Glowing Cyber Core Line */}
+            <div style={{ 
+              position: 'absolute', 
+              left: '12px', 
+              top: '8px', 
+              bottom: '8px', 
+              width: '2px', 
+              background: 'linear-gradient(180deg, var(--accent) 0%, rgba(77, 163, 255, 0.15) 100%)',
+              boxShadow: '0 0 10px rgba(77, 163, 255, 0.2)'
+            }} />
+
+            {/* Role 1 */}
+            <div style={{ 
+              position: 'relative', 
+              paddingLeft: '48px', 
+              paddingBottom: '48px',
+              display: 'grid',
+              gridTemplateColumns: '120px 1fr',
+              gap: '24px',
+              alignItems: 'start'
+            }}>
+              {/* Core Node Marker */}
+              <div style={{ 
+                position: 'absolute', 
+                left: '7px', 
+                top: '6px', 
+                width: '12px', 
+                height: '12px', 
+                borderRadius: '50%', 
+                backgroundColor: 'var(--accent)', 
+                border: '3px solid var(--bg-main)',
+                boxShadow: '0 0 8px var(--accent-glow)',
+                zIndex: 2
+              }} />
+              
+              <div style={{ 
+                fontFamily: 'var(--font-mono)', 
+                fontSize: '0.85rem', 
+                fontWeight: 600, 
+                color: 'var(--accent)',
+                marginTop: '3px'
+              }}>
+                2023 - CURRENT
+              </div>
+              
+              <div style={{ 
+                background: 'var(--bg-surface)', 
+                border: '1px solid var(--border)', 
+                borderRadius: '6px', 
+                padding: '24px' 
+              }}>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'baseline', 
+                  flexWrap: 'wrap', 
+                  gap: '10px', 
+                  marginBottom: '12px' 
+                }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>
+                    Security Researcher & Penetration Tester
+                  </h3>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    // ON-SITE CONTRACT
+                  </span>
+                </div>
+                <div style={{ 
+                  fontFamily: 'var(--font-mono)', 
+                  fontSize: '0.9rem', 
+                  color: 'var(--text-secondary)', 
+                  marginBottom: '16px',
+                  fontWeight: 500
+                }}>
+                  RED COMMAND SECURITY SERVICES
+                </div>
+                <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '0.95rem', margin: 0 }}>
+                  Conducted threat reconnaissance modeling, executed regular black-box web app vulnerability audits, discovered deep server logic failures, built custom payloads to bypass restrictive filters, and mentored junior assets on modern cyber threat landscapes.
+                </p>
+              </div>
+            </div>
+
+            {/* Role 2 */}
+            <div style={{ 
+              position: 'relative', 
+              paddingLeft: '48px', 
+              paddingBottom: '48px',
+              display: 'grid',
+              gridTemplateColumns: '120px 1fr',
+              gap: '24px',
+              alignItems: 'start'
+            }}>
+              {/* Core Node Marker */}
+              <div style={{ 
+                position: 'absolute', 
+                left: '7px', 
+                top: '6px', 
+                width: '12px', 
+                height: '12px', 
+                borderRadius: '50%', 
+                backgroundColor: 'var(--text-muted)', 
+                border: '3px solid var(--bg-main)',
+                zIndex: 2
+              }} />
+              
+              <div style={{ 
+                fontFamily: 'var(--font-mono)', 
+                fontSize: '0.85rem', 
+                fontWeight: 600, 
+                color: 'var(--text-secondary)',
+                marginTop: '3px'
+              }}>
+                2022 - 2023
+              </div>
+              
+              <div style={{ 
+                background: 'var(--bg-surface)', 
+                border: '1px solid var(--border)', 
+                borderRadius: '6px', 
+                padding: '24px' 
+              }}>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'baseline', 
+                  flexWrap: 'wrap', 
+                  gap: '10px', 
+                  marginBottom: '12px' 
+                }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>
+                    Junior Security Analyst
+                  </h3>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    // SOC OPERATIONS
+                  </span>
+                </div>
+                <div style={{ 
+                  fontFamily: 'var(--font-mono)', 
+                  fontSize: '0.9rem', 
+                  color: 'var(--text-secondary)', 
+                  marginBottom: '16px',
+                  fontWeight: 500
+                }}>
+                  INTELLIGENT DEFENSE CORP
+                </div>
+                <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '0.95rem', margin: 0 }}>
+                  Assisted in Security Operation Center telemetry routing, logged host events, triaged incoming malware reports, and wrote automated bash pipelines to quickly analyze server authentication attempts.
+                </p>
+              </div>
+            </div>
+
+            {/* Role 3 */}
+            <div style={{ 
+              position: 'relative', 
+              paddingLeft: '48px',
+              display: 'grid',
+              gridTemplateColumns: '120px 1fr',
+              gap: '24px',
+              alignItems: 'start'
+            }}>
+              {/* Core Node Marker */}
+              <div style={{ 
+                position: 'absolute', 
+                left: '7px', 
+                top: '6px', 
+                width: '12px', 
+                height: '12px', 
+                borderRadius: '50%', 
+                backgroundColor: 'var(--text-muted)', 
+                border: '3px solid var(--bg-main)',
+                zIndex: 2
+              }} />
+              
+              <div style={{ 
+                fontFamily: 'var(--font-mono)', 
+                fontSize: '0.85rem', 
+                fontWeight: 600, 
+                color: 'var(--text-secondary)',
+                marginTop: '3px'
+              }}>
+                2021 - 2022
+              </div>
+              
+              <div style={{ 
+                background: 'var(--bg-surface)', 
+                border: '1px solid var(--border)', 
+                borderRadius: '6px', 
+                padding: '24px' 
+              }}>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'baseline', 
+                  flexWrap: 'wrap', 
+                  gap: '10px', 
+                  marginBottom: '12px' 
+                }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>
+                    Cybersecurity Intern
+                  </h3>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    // LOGISTICS & PATCH
+                  </span>
+                </div>
+                <div style={{ 
+                  fontFamily: 'var(--font-mono)', 
+                  fontSize: '0.9rem', 
+                  color: 'var(--text-secondary)', 
+                  marginBottom: '16px',
+                  fontWeight: 500
+                }}>
+                  TECH SOLUTIONS INC.
+                </div>
+                <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '0.95rem', margin: 0 }}>
+                  Assisted internal teams on patch deployment cycles, scheduled Nmap auditing passes across developer dev machines, and maintained documentation catalogs of existing system dependencies.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Academic Background Section */}
+        <section style={{ paddingTop: '100px', paddingBottom: '100px', borderBottom: '1px solid var(--border)' }}>
+          <h2 className="section-title">ACADEMIC BACKGROUND</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px', marginTop: '30px' }}>
+            
+            {/* Degree 1 */}
+            <div style={{ 
+              border: '1px solid var(--border)', 
+              borderRadius: '6px',
+              background: 'var(--bg-surface)', 
+              padding: '30px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
+            }}>
+              <div>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', display: 'block', marginBottom: '8px' }}>
+                  // DEGREE PROFILE
+                </span>
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '12px', letterSpacing: '-0.01em' }}>
+                  Bachelor of Technology (B.Tech)
+                </h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '12px' }}>
+                  University Name Placeholder
+                </p>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '24px' }}>
+                  YEARS: 2021 - 2025 // STATUS: CONCLUDING
+                </p>
+              </div>
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-muted)', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  FOCUS CODES
+                </span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-secondary)', background: 'var(--bg-main)', border: '1px solid var(--border)', padding: '2px 6px', borderRadius: '2px' }}>
+                    CompSci Fundamentals
+                  </span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-secondary)', background: 'var(--bg-main)', border: '1px solid var(--border)', padding: '2px 6px', borderRadius: '2px' }}>
+                    Information Security
+                  </span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-secondary)', background: 'var(--bg-main)', border: '1px solid var(--border)', padding: '2px 6px', borderRadius: '2px' }}>
+                    Network Structures
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Degree 2 */}
+            <div style={{ 
+              border: '1px solid var(--border)', 
+              borderRadius: '6px',
+              background: 'var(--bg-surface)', 
+              padding: '30px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
+            }}>
+              <div>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', display: 'block', marginBottom: '8px' }}>
+                  // SECONDARY PROFILE
+                </span>
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '12px', letterSpacing: '-0.01em' }}>
+                  Higher Secondary Certificate (HSC)
+                </h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '12px' }}>
+                  High School Name Placeholder
+                </p>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '24px' }}>
+                  YEARS: 2019 - 2021 // STATUS: VERIFIED
+                </p>
+              </div>
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-muted)', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  FOCUS CODES
+                </span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-secondary)', background: 'var(--bg-main)', border: '1px solid var(--border)', padding: '2px 6px', borderRadius: '2px' }}>
+                    Mathematics & Calculus
+                  </span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-secondary)', background: 'var(--bg-main)', border: '1px solid var(--border)', padding: '2px 6px', borderRadius: '2px' }}>
+                    Physics
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Credentials & Certifications Section */}
+        <section id="credentials" style={{ paddingTop: '100px', paddingBottom: '100px', borderBottom: '1px solid var(--border)' }}>
+          <h2 className="section-title">VERIFIED OPERATOR ROADMAP</h2>
+          
+          {/* Progress Timeline Matrix */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', 
+            gap: '24px', 
+            marginTop: '30px' 
+          }}>
+            
+            {/* Cert 1 */}
+            <div style={{ 
+              background: 'var(--bg-surface)', 
+              border: '1px solid var(--border)', 
+              borderRadius: '6px', 
+              padding: '24px',
+              position: 'relative' 
+            }}>
+              <span style={{ 
+                position: 'absolute', 
+                top: '16px', 
+                right: '16px', 
+                fontFamily: 'var(--font-mono)', 
+                fontSize: '0.65rem', 
+                color: '#22c55e', 
+                background: 'rgba(34, 197, 94, 0.1)', 
+                padding: '2px 8px', 
+                borderRadius: '3px',
+                fontWeight: 600
+              }}>
+                COMPLETED
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginBottom: '16px' }}>
+                ID: COMP-SECPLUS
+              </span>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '6px', fontFamily: 'var(--font-mono)' }}>
+                Security+
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontFamily: 'var(--font-mono)', marginBottom: '16px' }}>
+                ISSUED BY: CompTIA
+              </p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                Validated core foundational competence in network architecture, cryptographic application protocols, threat response, and basic risk logic.
+              </p>
+            </div>
+
+            {/* Cert 2 */}
+            <div style={{ 
+              background: 'var(--bg-surface)', 
+              border: '1px solid var(--accent)', 
+              borderRadius: '6px', 
+              padding: '24px',
+              position: 'relative',
+              boxShadow: '0 0 15px rgba(77, 163, 255, 0.05)'
+            }}>
+              <span style={{ 
+                position: 'absolute', 
+                top: '16px', 
+                right: '16px', 
+                fontFamily: 'var(--font-mono)', 
+                fontSize: '0.65rem', 
+                color: 'var(--accent)', 
+                background: 'var(--accent-dim)', 
+                padding: '2px 8px', 
+                borderRadius: '3px',
+                fontWeight: 600
+              }}>
+                IN PROGRESS
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginBottom: '16px' }}>
+                ID: EC-CEH
+              </span>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '6px', fontFamily: 'var(--font-mono)' }}>
+                CEH (ANSI)
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontFamily: 'var(--font-mono)', marginBottom: '16px' }}>
+                TARGET: MID-2026
+              </p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                Refining methodology vectors mapping against systematic enterprise system scanning, vulnerability mapping, and general offensive protocols.
+              </p>
+            </div>
+
+            {/* Cert 3 */}
+            <div style={{ 
+              background: 'var(--bg-surface)', 
+              border: '1px solid var(--border)', 
+              borderRadius: '6px', 
+              padding: '24px',
+              position: 'relative' 
+            }}>
+              <span style={{ 
+                position: 'absolute', 
+                top: '16px', 
+                right: '16px', 
+                fontFamily: 'var(--font-mono)', 
+                fontSize: '0.65rem', 
+                color: 'var(--text-muted)', 
+                background: 'rgba(255,255,255,0.03)', 
+                padding: '2px 8px', 
+                borderRadius: '3px',
+                fontWeight: 600
+              }}>
+                TARGET
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginBottom: '16px' }}>
+                ID: SEC-PNPT
+              </span>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '6px', fontFamily: 'var(--font-mono)' }}>
+                PNPT
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontFamily: 'var(--font-mono)', marginBottom: '16px' }}>
+                ROADMAP TARGET
+              </p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                Practical network penetration testing certification focusing on external recon sweeps, AD exploitation sequences, and technical report writing.
+              </p>
+            </div>
+
+            {/* Cert 4 */}
+            <div style={{ 
+              background: 'var(--bg-surface)', 
+              border: '1px solid var(--border)', 
+              borderRadius: '6px', 
+              padding: '24px',
+              position: 'relative' 
+            }}>
+              <span style={{ 
+                position: 'absolute', 
+                top: '16px', 
+                right: '16px', 
+                fontFamily: 'var(--font-mono)', 
+                fontSize: '0.65rem', 
+                color: 'var(--text-muted)', 
+                background: 'rgba(255,255,255,0.03)', 
+                padding: '2px 8px', 
+                borderRadius: '3px',
+                fontWeight: 600
+              }}>
+                TARGET
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginBottom: '16px' }}>
+                ID: OFFSEC-OSCP
+              </span>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '6px', fontFamily: 'var(--font-mono)' }}>
+                OSCP
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontFamily: 'var(--font-mono)', marginBottom: '16px' }}>
+                ROADMAP TARGET
+              </p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                Rigorous 24-hour hands-on network system compromise exam validating advanced penetration testing, payload delivery, and exploit scripting.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Achievements Section */}
+        <section style={{ paddingTop: '100px', paddingBottom: '100px', borderBottom: '1px solid var(--border)' }}>
+          <h2 className="section-title">THREAT LEDGER & LOGS</h2>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px', marginTop: '30px' }}>
+            
+            {/* Ach 1 */}
+            <div style={{ 
+              border: '1px solid var(--border)', 
+              borderRadius: '6px', 
+              background: 'var(--bg-surface)', 
+              padding: '24px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
+            }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 600 }}>
+                    // LOG_ENTRY: THM_01
+                  </span>
+                  <Award size={18} color="var(--accent)" />
+                </div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '10px' }}>
+                  Top 1% Global Rank
+                </h3>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                  PLATFORM: TRYHACKME
+                </p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6' }}>
+                  Ranked within the top 1% of registered operators globally, systematically solving capture-the-flag challenges in offensive scripting, malware triage, and systems intrusion.
+                </p>
+              </div>
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '14px', marginTop: '20px', fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--accent)' }}>
+                ▶ VERIFIED CHALLENGE POINTS LOADED
+              </div>
+            </div>
+
+            {/* Ach 2 */}
+            <div style={{ 
+              border: '1px solid var(--border)', 
+              borderRadius: '6px', 
+              background: 'var(--bg-surface)', 
+              padding: '24px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
+            }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 600 }}>
+                    // LOG_ENTRY: BOUNTY_05
+                  </span>
+                  <Lock size={18} color="var(--accent)" />
+                </div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '10px' }}>
+                  5+ Valid Bug Reports
+                </h3>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                  PLATFORM: RESPONSIBLE DISCLOSURE
+                </p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6' }}>
+                  Successfully identified, documented, and responsibly reported 5+ high-priority vulnerabilities in active web structures helping lock public endpoints down.
+                </p>
+              </div>
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '14px', marginTop: '20px', fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--accent)' }}>
+                ▶ DISCLOSURE COGNIZANCE REGISTERED
+              </div>
+            </div>
+
+            {/* Ach 3 */}
+            <div style={{ 
+              border: '1px solid var(--border)', 
+              borderRadius: '6px', 
+              background: 'var(--bg-surface)', 
+              padding: '24px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
+            }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 600 }}>
+                    // LOG_ENTRY: CTF_LEAGUE
+                  </span>
+                  <Terminal size={18} color="var(--accent)" />
+                </div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '10px' }}>
+                  1st Place CTF Winner
+                </h3>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                  PLATFORM: UNIVERSITY SEC LEAGUE
+                </p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6' }}>
+                  Steered the core offensive payload team to victory in the university-wide capture the flag competition, cracking logic bugs, reversing compiled targets, and resolving cipher files.
+                </p>
+              </div>
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '14px', marginTop: '20px', fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--accent)' }}>
+                ▶ ACADEMIC COMMAND MATRIX VERIFIED
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Analytical Quote Section */}
+        <section className="quote-section">
+          <div className="quote-text">
+            "Security is not about having tools. It is about understanding trust boundaries, identifying assumptions, and testing them until they fail."
+          </div>
+          <div className="quote-author">
+            // ARNAV SHIRVADKAR // PRINCIPLE_01
+          </div>
+        </section>
+
+        {/* Initiate Contact Terminal CTA */}
+        <section id="terminal" style={{ paddingTop: '100px', paddingBottom: '120px' }}>
+          <div style={{ 
+            border: '1px solid var(--border)', 
+            borderRadius: '6px', 
+            background: 'var(--bg-surface)',
+            overflow: 'hidden'
+          }}>
+            {/* Terminal Window Header Bar */}
+            <div style={{ 
+              background: 'var(--bg-surface-elevated)', 
+              borderBottom: '1px solid var(--border)',
+              padding: '12px 20px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#ef4444' }} />
+                <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#eab308' }} />
+                <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#22c55e' }} />
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '12px' }}>
+                  CONSOLE://SEC_COMM_ESTABLISH
+                </span>
+              </div>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                SSL_ENCRYPTED_256BIT
+              </span>
+            </div>
+
+            {/* Terminal Body Content */}
+            <div style={{ padding: '40px 30px' }}>
+              <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                
+                <h2 style={{ 
+                  fontSize: '2rem', 
+                  fontWeight: 700, 
+                  marginBottom: '16px', 
+                  color: 'var(--text-primary)',
+                  letterSpacing: '-0.02em',
+                  fontFamily: 'var(--font-sans)'
+                }}>
+                  INITIATE_CONTACT()
+                </h2>
+                
+                <p style={{ 
+                  color: 'var(--text-secondary)', 
+                  lineHeight: '1.6', 
+                  marginBottom: '32px',
+                  fontSize: '0.95rem'
+                }}>
+                  Target operational parameters for collaboration, deep research integrations, security audits, or tooling setups. Choose target directives below to establish active telemetry pipelines.
+                </p>
+
+                <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  
+                  {/* Select Directives Parameters */}
+                  <div>
+                    <span style={{ 
+                      fontFamily: 'var(--font-mono)', 
+                      fontSize: '0.7rem', 
+                      color: 'var(--text-muted)', 
+                      display: 'block', 
+                      marginBottom: '12px',
+                      textTransform: 'uppercase'
+                    }}>
+                      [ SELECT TARGET DIRECTIVES ]
+                    </span>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                      {[
+                        'OFFENSIVE SECURITY',
+                        'TOOLING DEVELOPMENT',
+                        'RESEARCH COOPERATION',
+                        'INTERNSHIPS / CAREERS',
+                        'INFRASTRUCTURE AUDITING'
+                      ].map(param => {
+                        const isChecked = selectedInterests.includes(param);
+                        return (
+                          <div key={param}>
+                            <input 
+                              type="checkbox" 
+                              id={`param-${param}`}
+                              className="terminal-checkbox"
+                              checked={isChecked}
+                              onChange={() => handleInterestToggle(param)}
+                            />
+                            <label 
+                              htmlFor={`param-${param}`}
+                              className="terminal-checkbox-label"
+                            >
+                              {param}
+                            </label>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Input Telemetry Details */}
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
+                    gap: '20px' 
+                  }}>
+                    <div>
+                      <label style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>
+                        OPERATOR_NAME *
+                      </label>
+                      <input 
+                        type="text" 
+                        required 
+                        placeholder="Anonymous" 
+                        style={{ 
+                          width: '100%', 
+                          background: 'var(--bg-main)', 
+                          border: '1px solid var(--border)', 
+                          borderRadius: '4px', 
+                          padding: '12px 16px', 
+                          color: 'var(--text-primary)', 
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.85rem'
+                        }} 
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>
+                        CONTACT_EMAIL *
+                      </label>
+                      <input 
+                        type="email" 
+                        required 
+                        placeholder="operator@system.domain" 
+                        style={{ 
+                          width: '100%', 
+                          background: 'var(--bg-main)', 
+                          border: '1px solid var(--border)', 
+                          borderRadius: '4px', 
+                          padding: '12px 16px', 
+                          color: 'var(--text-primary)', 
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.85rem'
+                        }} 
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>
+                      OPERATIONAL_MESSAGE_BURST *
+                    </label>
+                    <textarea 
+                      required 
+                      rows={5} 
+                      placeholder="Outline mission profile, target boundary variables, or research goals..." 
+                      style={{ 
+                        width: '100%', 
+                        background: 'var(--bg-main)', 
+                        border: '1px solid var(--border)', 
+                        borderRadius: '4px', 
+                        padding: '12px 16px', 
+                        color: 'var(--text-primary)', 
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.85rem',
+                        resize: 'none'
+                      }} 
+                    />
+                  </div>
+
+                  {contactSuccess && (
+                    <div style={{ 
+                      background: 'rgba(34, 197, 94, 0.1)', 
+                      border: '1px solid #22c55e', 
+                      borderRadius: '4px', 
+                      padding: '16px',
+                      color: '#22c55e',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.85rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px'
+                    }}>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e' }} />
+                      TELEMETRY BURST SENT SUCCESSFULLY. CONSOLE AWAITING INCOMING RESPONSE.
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+                    <button type="submit" className="pill-btn">
+                      <Send size={14} /> TRANSMIT ENCRYPTED BURST
+                    </button>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-muted)' }}>
+                      BY TRANSMITTING, YOU COMPLY WITH DIRECTIVE 44-SEC
+                    </span>
+                  </div>
+
+                </form>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+
+      {/* High-End Technical System Footer */}
       <footer style={{ 
-        background: '#0a0a0a', 
-        color: '#fff', 
-        width: '100vw', 
-        marginLeft: 'calc(-50vw + 50%)', 
-        padding: '120px 5vw 40px', 
-        position: 'relative', 
-        overflow: 'hidden' 
+        borderTop: '1px solid var(--border)', 
+        backgroundColor: 'var(--bg-darker)', 
+        padding: '60px 0 40px',
+        width: '100%'
       }}>
-        <div style={{ maxWidth: '1440px', margin: '0 auto', position: 'relative' }}>
+        <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 24px' }}>
           
-          <h1 style={{ fontSize: 'min(16vw, 240px)', lineHeight: '0.9', margin: 0, zIndex: 2, position: 'relative', letterSpacing: '-0.04em' }}>Let's</h1>
-          <h1 className="serif-italic" style={{ fontSize: 'min(16vw, 240px)', lineHeight: '0.9', margin: 0, zIndex: 2, position: 'relative', transform: 'translateX(10vw)', letterSpacing: '-0.02em', color: '#fff' }}>Collaborate</h1>
-          
-          {/* Footer Avatar */}
-          <div style={{ position: 'absolute', top: '10%', right: '15%', width: 'min(20vw, 250px)', height: 'min(20vw, 250px)', borderRadius: '50%', overflow: 'hidden', border: '6px solid #222', zIndex: 1 }}>
-             <img src={profilePic} alt="Arnav" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.2)' }} />
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'flex-start',
+            flexWrap: 'wrap',
+            gap: '40px',
+            marginBottom: '40px'
+          }}>
+            {/* Left Node */}
+            <div>
+              <div style={{ 
+                fontFamily: 'var(--font-mono)', 
+                fontSize: '0.9rem', 
+                fontWeight: 700, 
+                color: 'var(--text-primary)',
+                marginBottom: '12px' 
+              }}>
+                ARNAV SHIRVADKAR // SEC_ENG
+              </div>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', maxWidth: '350px', lineHeight: '1.5' }}>
+                Securing application surfaces and mapping complex vulnerabilities through coordinated offensive security sequences.
+              </p>
+            </div>
+
+            {/* Center Node: Navigation */}
+            <div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--accent)', fontWeight: 600, marginBottom: '16px', textTransform: 'uppercase' }}>
+                [ SYSTEM LINKS ]
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>
+                <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }} className="nav-link">BACK TO TOP</a>
+                <a href="#capabilities" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }} className="nav-link">CAPABILITIES</a>
+                <a href="#operations" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }} className="nav-link">CASE DOSSIERS</a>
+                <a href="#history" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }} className="nav-link">HISTORY</a>
+              </div>
+            </div>
+
+            {/* Right Node: Network Status */}
+            <div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--accent)', fontWeight: 600, marginBottom: '16px', textTransform: 'uppercase' }}>
+                [ NETWORK STATUS ]
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                <div>GATEWAY: active.arnav.ops</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  SECURE COMPLIANCE: 
+                  <span style={{ color: '#22c55e', background: 'rgba(34, 197, 94, 0.1)', padding: '1px 6px', borderRadius: '2px', fontSize: '0.65rem' }}>
+                    100% SECURE
+                  </span>
+                </div>
+                <div>LOCAL SIGN: PGP_KEY_8146F</div>
+              </div>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '180px', fontSize: '0.85rem', color: '#888', textTransform: 'uppercase', fontWeight: 600 }}>
-            <div>PURWOKERTO, INDONESIA</div>
-            <div>{time}</div>
+          <hr style={{ borderColor: 'var(--border)', margin: '40px 0 20px' }} />
+
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            flexWrap: 'wrap', 
+            gap: '15px',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.75rem',
+            color: 'var(--text-muted)'
+          }}>
+            <div>
+              © {new Date().getFullYear()} ARNAV SHIRVADKAR. ALL PRIVILEGES RESERVED.
+            </div>
+            <div>
+              [ BUILT TO AUDIT SYSTEM TRUST VECTOR BOUNDARIES ]
+            </div>
           </div>
 
         </div>
       </footer>
+
     </div>
   );
 }
