@@ -370,15 +370,25 @@ export default function App() {
             {/* Op 1 */}
             <div className="project-wrapper">
               <div>
-                <div className="project-header">
-                  <h3 className="project-title" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                    OP_ALPHA // DETECT
+                <div className="project-header" style={{ marginBottom: '8px' }}>
+                  <h3 className="project-title" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: '0.95rem', lineHeight: '1.4' }}>
+                    OP_ALPHA // DETECT – High-Fidelity Network Intrusion & Alert Agent
                   </h3>
                   <span className="project-number">OP-01</span>
                 </div>
-                <p className="project-tagline" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--accent)' }}>
-                  [ CLASS: ADVANCED NETWORK INTRUSION DETECTION ]
-                </p>
+                
+                <div style={{ 
+                  fontFamily: 'var(--font-mono)', 
+                  fontSize: '0.72rem', 
+                  color: 'var(--accent)', 
+                  letterSpacing: '0.05em',
+                  marginBottom: '14px',
+                  textTransform: 'uppercase',
+                  borderBottom: '1px solid var(--border)',
+                  paddingBottom: '8px'
+                }}>
+                  Python | Scapy | ELK Stack | Suricata | Threat Parsing & Alerting | Linux Kernel API
+                </div>
                 
                 <div className="project-silhouette">
                   <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" alt="Operation Alpha" />
@@ -389,20 +399,13 @@ export default function App() {
                   </div>
                 </div>
 
-                <p className="project-overview">
-                  An AI-driven threat parsing and alert system designed to identify and isolate active lateral network movements. Implements deep packet inspection logic combined with custom heuristics pipelines to preemptively flag threat profiles.
+                <p className="project-overview" style={{ fontSize: '0.85rem', lineHeight: '1.6', color: 'var(--text-secondary)', marginTop: '14px' }}>
+                  Designed as an automated network intrusion agent, this project acts to capture and isolate active lateral host movements in real-time. By implementing low-level packet heuristics alongside a deep-inspection engine, it eliminates the risk of silent threat actor reconnaissance. The ultimate value delivered to operators is a high-fidelity alert console that drops containment response windows from hours to seconds.
                 </p>
               </div>
 
               <div>
-                <div className="tech-stack">
-                  <span className="tech-tag">Python</span>
-                  <span className="tech-tag">Scapy</span>
-                  <span className="tech-tag">ELK Stack</span>
-                  <span className="tech-tag">Suricata</span>
-                  <span className="tech-tag">Linux API</span>
-                </div>
-                <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                   <button className="pill-btn" style={{ flex: 1, justifyContent: 'center', padding: '8px' }}>
                     [ VIEW CASE FILE ]
                   </button>
@@ -416,15 +419,25 @@ export default function App() {
             {/* Op 2 */}
             <div className="project-wrapper">
               <div>
-                <div className="project-header">
-                  <h3 className="project-title" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                    OP_BETA // AUTO_PENTEST
+                <div className="project-header" style={{ marginBottom: '8px' }}>
+                  <h3 className="project-title" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: '0.95rem', lineHeight: '1.4' }}>
+                    OP_BETA // AUTO_PENTEST – Orchestrated Threat Simulation Framework
                   </h3>
                   <span className="project-number">OP-02</span>
                 </div>
-                <p className="project-tagline" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--accent)' }}>
-                  [ CLASS: AUTOMATED PENETRATION TESTING FRAMEWORK ]
-                </p>
+                
+                <div style={{ 
+                  fontFamily: 'var(--font-mono)', 
+                  fontSize: '0.72rem', 
+                  color: 'var(--accent)', 
+                  letterSpacing: '0.05em',
+                  marginBottom: '14px',
+                  textTransform: 'uppercase',
+                  borderBottom: '1px solid var(--border)',
+                  paddingBottom: '8px'
+                }}>
+                  Go | Docker | Metasploit API | Recon Vector | Vulnerability Discovery | Isolated Sandboxes
+                </div>
                 
                 <div className="project-silhouette">
                   <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1200&q=80" alt="Operation Beta" />
@@ -435,19 +448,13 @@ export default function App() {
                   </div>
                 </div>
 
-                <p className="project-overview">
-                  A modular Golang orchestration framework simulating coordinated threat actor behavior. Implements automated discovery sweeps, scans target exploit surfaces, and exposes critical infrastructure vulnerabilities across simulated sandboxes.
+                <p className="project-overview" style={{ fontSize: '0.85rem', lineHeight: '1.6', color: 'var(--text-secondary)', marginTop: '14px' }}>
+                  This modular Go framework orchestrates concurrent adversarial scripts to simulate complex threat actor maneuvers across target environments. It systematically solves the manual bottleneck of asset auditing by automating vulnerability discovery and target compromise pathways. This provides offensive operators with rapid, standardized security postures and repeatable gap validations without interrupting live operations.
                 </p>
               </div>
 
               <div>
-                <div className="tech-stack">
-                  <span className="tech-tag">Go</span>
-                  <span className="tech-tag">Docker</span>
-                  <span className="tech-tag">Metasploit API</span>
-                  <span className="tech-tag">Recon Vector</span>
-                </div>
-                <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                   <button className="pill-btn" style={{ flex: 1, justifyContent: 'center', padding: '8px' }}>
                     [ VIEW CASE FILE ]
                   </button>
@@ -461,15 +468,25 @@ export default function App() {
             {/* Op 3 */}
             <div className="project-wrapper">
               <div>
-                <div className="project-header">
-                  <h3 className="project-title" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                    OP_GAMMA // CLOUD_POSTURE
+                <div className="project-header" style={{ marginBottom: '8px' }}>
+                  <h3 className="project-title" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: '0.95rem', lineHeight: '1.4' }}>
+                    OP_GAMMA // CLOUD_POSTURE – Multi-Cloud IAM & Compliance Ledger
                   </h3>
                   <span className="project-number">OP-03</span>
                 </div>
-                <p className="project-tagline" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--accent)' }}>
-                  [ CLASS: CLOUD SECURITY POSTURE MANAGEMENT ]
-                </p>
+                
+                <div style={{ 
+                  fontFamily: 'var(--font-mono)', 
+                  fontSize: '0.72rem', 
+                  color: 'var(--accent)', 
+                  letterSpacing: '0.05em',
+                  marginBottom: '14px',
+                  textTransform: 'uppercase',
+                  borderBottom: '1px solid var(--border)',
+                  paddingBottom: '8px'
+                }}>
+                  Terraform | AWS Cloud | IAM Analyzer | Custodian | Configuration Monitoring | Multi-Tenant VPCs
+                </div>
                 
                 <div className="project-silhouette">
                   <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80" alt="Operation Gamma" />
@@ -480,19 +497,13 @@ export default function App() {
                   </div>
                 </div>
 
-                <p className="project-overview">
-                  Automated security posture and IAM configuration tracking across major multi-cloud targets. Implements active monitoring policies that flag exposed endpoints, unencrypted storage systems, and overly permissive trust loops.
+                <p className="project-overview" style={{ fontSize: '0.85rem', lineHeight: '1.6', color: 'var(--text-secondary)', marginTop: '14px' }}>
+                  This automation engine establishes continuous drift tracking and configuration audits across highly complex multi-cloud deployments. It actively mitigates the threat of exposed services and overly permissive trust loops by auto-remediating compliance violations in real-time. The final system provides security teams with an immutable audit trail and unified posture intelligence to prevent cloud data leaks.
                 </p>
               </div>
 
               <div>
-                <div className="tech-stack">
-                  <span className="tech-tag">Terraform</span>
-                  <span className="tech-tag">AWS Cloud</span>
-                  <span className="tech-tag">IAM Analyzer</span>
-                  <span className="tech-tag">Custodian</span>
-                </div>
-                <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                   <button className="pill-btn" style={{ flex: 1, justifyContent: 'center', padding: '8px' }}>
                     [ VIEW CASE FILE ]
                   </button>
@@ -506,15 +517,25 @@ export default function App() {
             {/* Op 4 */}
             <div className="project-wrapper">
               <div>
-                <div className="project-header">
-                  <h3 className="project-title" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                    OP_DELTA // ZERO_TRUST
+                <div className="project-header" style={{ marginBottom: '8px' }}>
+                  <h3 className="project-title" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: '0.95rem', lineHeight: '1.4' }}>
+                    OP_DELTA // ZERO_TRUST – Secure Microservices Mesh Architecture
                   </h3>
                   <span className="project-number">OP-04</span>
                 </div>
-                <p className="project-tagline" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--accent)' }}>
-                  [ CLASS: ZERO TRUST ARCHITECTURE ]
-                </p>
+                
+                <div style={{ 
+                  fontFamily: 'var(--font-mono)', 
+                  fontSize: '0.72rem', 
+                  color: 'var(--accent)', 
+                  letterSpacing: '0.05em',
+                  marginBottom: '14px',
+                  textTransform: 'uppercase',
+                  borderBottom: '1px solid var(--border)',
+                  paddingBottom: '8px'
+                }}>
+                  Kubernetes | Istio Service Mesh | OPA Core | OAuth2 | Mutual TLS (mTLS) | Encrypted Transit Gateways
+                </div>
                 
                 <div className="project-silhouette">
                   <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80" alt="Operation Delta" />
@@ -525,19 +546,13 @@ export default function App() {
                   </div>
                 </div>
 
-                <p className="project-overview">
-                  Reference microservices implementation locking internal networks down using mutual TLS, continuous request authorization policies, and strict API proxy gateway segmentations.
+                <p className="project-overview" style={{ fontSize: '0.85rem', lineHeight: '1.6', color: 'var(--text-secondary)', marginTop: '14px' }}>
+                  This reference architecture secures enterprise-scale container communication by enforcing strict identity assertions on every request hop. It completely solves the vulnerability of implicit network trust by implementing mutual TLS encryption and fine-grained authorization gates. The core utility ensures that a compromised service remains isolated, fully protecting consumer data from unauthorized access.
                 </p>
               </div>
 
               <div>
-                <div className="tech-stack">
-                  <span className="tech-tag">Kubernetes</span>
-                  <span className="tech-tag">Istio Service Mesh</span>
-                  <span className="tech-tag">OPA Core</span>
-                  <span className="tech-tag">OAuth2</span>
-                </div>
-                <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                   <button className="pill-btn" style={{ flex: 1, justifyContent: 'center', padding: '8px' }}>
                     [ VIEW CASE FILE ]
                   </button>
