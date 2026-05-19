@@ -245,16 +245,33 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Operation Dossiers (Projects) */
 .projects-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  display: flex;
+  overflow-x: auto;
   gap: 30px;
-  padding: 10px 0 30px;
+  padding: 10px 4px 30px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
 }
 
-@media (max-width: 768px) {
-  .projects-container {
-    grid-template-columns: 1fr;
-  }
+/* Custom scrollbar for premium tactical feel */
+.projects-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.projects-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+
+.projects-container::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.projects-container::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
 }
 
 .project-wrapper {
@@ -269,6 +286,20 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  flex: 0 0 calc((100% - 60px) / 3);
+  scroll-snap-align: start;
+}
+
+@media (max-width: 1024px) {
+  .project-wrapper {
+    flex: 0 0 calc((100% - 30px) / 2);
+  }
+}
+
+@media (max-width: 768px) {
+  .project-wrapper {
+    flex: 0 0 100%;
+  }
 }
 
 .project-wrapper::after {
